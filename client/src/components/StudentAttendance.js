@@ -1,23 +1,43 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
+import api from '../config/api';
 import { Assignment } from '@mui/icons-material';
 
-function StudentAttendance({ studentId }) {
-  const [records, setRecords] = useState([]);
-  const [error, setError] = useState('');
+function StudentAttendance() {
+  const { user } = useAuth();
+  const [attendance, setAttendance] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   useEffect(() => {
-    axios.get(`/api/attendance/student/${studentId}`)
-      .then(res => setRecords(res.data.data || []))
-      .catch(err => {
-        if (err.response && err.response.status === 403) {
-          setError('You are not authorized to view your attendance. Please contact your administrator.');
-        } else if (err.response && err.response.status === 404) {
-          setError('Attendance not found.');
+    if (user?.role === 'student' && user?.roleDetails?._id) {
+      fetchAttendance(user.roleDetails._id);
         } else {
-          setError('An unexpected error occurred while fetching attendance.');
-        }
-      });
-  }, [studentId]);
+      setLoading(false);
+      setError('You must be a student to view attendance.');
+    }
+  }, [user]);
+
+  const fetchAttendance = async (studentId) => {
+    try {
+      setLoading(true);
+      const response = await api.get(`/api/attendance/student/${studentId}`);
+      setAttendance(response.data.data);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to fetch attendance');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-sky-50 py-8 px-2 sm:px-6 lg:px-12">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-8">
@@ -41,7 +61,7 @@ function StudentAttendance({ studentId }) {
             </tr>
           </thead>
           <tbody>
-            {records.map(r => (
+            {attendance.map(r => (
               <tr key={r._id} className="border-b hover:bg-sky-50 transition">
                 <td className="py-2 px-4">{new Date(r.date).toLocaleDateString()}</td>
                 <td className="py-2 px-4">{typeof r.class === 'object' ? r.class.className : r.class}</td>
@@ -59,7 +79,7 @@ function StudentAttendance({ studentId }) {
                 <td className="py-2 px-4">{r.remarks}</td>
               </tr>
             ))}
-            {records.length === 0 && !error && (
+            {attendance.length === 0 && !error && (
               <tr>
                 <td colSpan={4} className="text-center text-sky-400 py-6">No attendance records found.</td>
               </tr>
@@ -70,4 +90,5 @@ function StudentAttendance({ studentId }) {
     </div>
   );
 }
+
 export default StudentAttendance; 

@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import AnimatedInput from './AnimatedInput';
+import api from '../config/api';
+
 
 function ScheduleForm({ onSubmit, onCancel, initialData }) {
   const [formData, setFormData] = useState({
@@ -34,12 +37,12 @@ function ScheduleForm({ onSubmit, onCancel, initialData }) {
   const fetchClassesAndTeachers = async () => {
     try {
       const [classesResponse, teachersResponse] = await Promise.all([
-        axios.get('http://localhost:5000/api/classes', {
+        api.get('/api/classes', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         }),
-        axios.get('http://localhost:5000/api/teachers', {
+        api.get('/api/teachers', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
@@ -134,12 +137,9 @@ function ScheduleForm({ onSubmit, onCancel, initialData }) {
               {error}
             </div>
           )}
-
           <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
             <div className="sm:col-span-3">
-              <label htmlFor="classId" className="block text-sm font-medium text-gray-700">
-                Class
-              </label>
+              <label htmlFor="classId" className="block text-sm font-medium text-gray-700">Class</label>
               <select
                 id="classId"
                 name="classId"
@@ -156,27 +156,20 @@ function ScheduleForm({ onSubmit, onCancel, initialData }) {
                 ))}
               </select>
             </div>
-
             <div className="sm:col-span-3">
-              <label htmlFor="subject" className="block text-sm font-medium text-gray-700">
-                Subject
-              </label>
-              <input
+              <AnimatedInput
                 type="text"
                 name="subject"
                 id="subject"
+                label="Subject"
                 value={formData.subject}
                 onChange={handleChange}
                 required
-                className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                 placeholder="Enter subject"
               />
             </div>
-
             <div className="sm:col-span-3">
-              <label htmlFor="teacherId" className="block text-sm font-medium text-gray-700">
-                Teacher
-              </label>
+              <label htmlFor="teacherId" className="block text-sm font-medium text-gray-700">Teacher</label>
               <select
                 id="teacherId"
                 name="teacherId"
@@ -193,11 +186,8 @@ function ScheduleForm({ onSubmit, onCancel, initialData }) {
                 ))}
               </select>
             </div>
-
             <div className="sm:col-span-2">
-              <label htmlFor="dayOfWeek" className="block text-sm font-medium text-gray-700">
-                Day
-              </label>
+              <label htmlFor="dayOfWeek" className="block text-sm font-medium text-gray-700">Day</label>
               <select
                 id="dayOfWeek"
                 name="dayOfWeek"
@@ -213,67 +203,54 @@ function ScheduleForm({ onSubmit, onCancel, initialData }) {
                 ))}
               </select>
             </div>
-
             <div className="sm:col-span-2">
-              <label htmlFor="startTime" className="block text-sm font-medium text-gray-700">
-                Start Time
-              </label>
-              <input
+              <AnimatedInput
                 type="time"
                 name="startTime"
                 id="startTime"
+                label="Start Time"
                 value={formData.startTime}
                 onChange={handleChange}
                 required
-                className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
               />
             </div>
-
             <div className="sm:col-span-2">
-              <label htmlFor="endTime" className="block text-sm font-medium text-gray-700">
-                End Time
-              </label>
-              <input
+              <AnimatedInput
                 type="time"
                 name="endTime"
                 id="endTime"
+                label="End Time"
                 value={formData.endTime}
                 onChange={handleChange}
                 required
-                className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
               />
             </div>
-
             <div className="sm:col-span-3">
-              <label htmlFor="room" className="block text-sm font-medium text-gray-700">
-                Room
-              </label>
-              <input
+              <AnimatedInput
                 type="text"
                 name="room"
                 id="room"
+                label="Room"
                 value={formData.room}
                 onChange={handleChange}
                 required
-                className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                placeholder="Enter room number"
+                placeholder="Enter room"
               />
             </div>
           </div>
-
-          <div className="flex justify-end space-x-3">
+          <div className="flex justify-end space-x-2 pt-2">
             <button
               type="button"
               onClick={onCancel}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="px-5 py-2 text-sm font-semibold text-indigo-700 bg-white border border-indigo-200 rounded-lg shadow hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-400"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="px-5 py-2 text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-blue-400 rounded-lg shadow hover:from-indigo-600 hover:to-blue-500 focus:outline-none focus:ring-2 focus:ring-indigo-400"
             >
-              {initialData ? 'Update' : 'Create'} Schedule
+              {initialData ? 'Update Schedule' : 'Create Schedule'}
             </button>
           </div>
         </form>

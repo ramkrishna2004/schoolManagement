@@ -113,14 +113,14 @@ const About = () => {
 
   return (
     <div className="relative min-h-screen text-gray-200 overflow-hidden bg-gradient-to-br from-indigo-900 to-gray-300 font-sans">
-      <canvas ref={canvasRef} className="fixed top-0 left-0 z-0 opacity-50" />
-      <div className="relative z-10 flex flex-col items-center py-16 px-6">
+      <canvas ref={canvasRef} className="fixed top-0 left-0 z-0 opacity-50 w-full h-full" />
+      <div className="relative z-10 flex flex-col items-center py-10 px-2 sm:py-14 sm:px-4 md:py-16 md:px-6">
         {/* Summary Card */}
         <motion.div
           initial={{ opacity: 0, y: 150 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, ease: 'easeOut' }}
-          className="max-w-3xl w-full p-10 mb-20 rounded-2xl bg-gray-800/40 backdrop-blur-xl border border-blue-300/30 shadow-2xl transform perspective-1000"
+          className="w-full max-w-lg sm:max-w-2xl md:max-w-3xl p-4 sm:p-8 md:p-10 mb-10 sm:mb-16 md:mb-20 rounded-2xl bg-gray-800/40 backdrop-blur-xl border border-blue-300/30 shadow-2xl transform perspective-1000"
           style={{ boxShadow: '0 0 20px rgba(147, 197, 253, 0.3)' }}
         >
           <div className="text-center">
@@ -128,17 +128,17 @@ const About = () => {
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ type: 'spring', stiffness: 150, delay: 0.6 }}
-              className="inline-block mb-6"
+              className="inline-block mb-4 sm:mb-6"
             >
-              <svg width="100" height="100" fill="none" viewBox="0 0 60 60">
+              <svg width="80" height="80" fill="none" viewBox="0 0 60 60" className="sm:w-[100px] sm:h-[100px]">
                 <circle cx="30" cy="30" r="30" fill="#93c5fd" />
                 <text x="30" y="38" textAnchor="middle" fontSize="28" fill="#1e3a8a" fontWeight="bold">RK</text>
               </svg>
             </motion.div>
-            <h1 className="text-5xl font-extrabold text-blue-200 mb-3 tracking-tight">MULUGU NAGA RAMA KRISHNA CHARI</h1>
-            <p className="text-xl text-gray-300 font-medium mb-3">Full Stack Developer & Cybersecurity Enthusiast</p>
-            <p className="text-base text-gray-400 mb-8 leading-relaxed">Proficient in Java, Python, React Native, and database technologies. Strong foundation in secure coding and penetration testing, dedicated to crafting secure, impactful digital solutions.</p>
-            <div className="flex justify-center gap-8">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-blue-200 mb-2 sm:mb-3 tracking-tight">MULUGU NAGA RAMA KRISHNA CHARI</h1>
+            <p className="text-base sm:text-lg md:text-xl text-gray-300 font-medium mb-2 sm:mb-3">Full Stack Developer & Cybersecurity Enthusiast</p>
+            <p className="text-xs sm:text-base text-gray-400 mb-6 sm:mb-8 leading-relaxed">Proficient in Java, Python, React Native, and database technologies. Strong foundation in secure coding and penetration testing, dedicated to crafting secure, impactful digital solutions.</p>
+            <div className="flex justify-center gap-6 sm:gap-8">
               {socialLinks.map((link, idx) => (
                 <motion.a
                   key={link.label}
@@ -159,7 +159,7 @@ const About = () => {
         </motion.div>
 
         {/* Timeline */}
-        <div className="w-full max-w-5xl mb-20">
+        <div className="w-full max-w-lg sm:max-w-2xl md:max-w-5xl mb-10 sm:mb-16 md:mb-20">
           {timeline.map((section, idx) => (
             <motion.div
               key={section.type}
@@ -167,15 +167,15 @@ const About = () => {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 1, delay: idx * 0.2 }}
-              className="mb-16 p-10 rounded-3xl bg-gray-800/30 backdrop-blur-lg border border-blue-300/20 shadow-xl transform perspective-1000 hover:-translate-y-2"
+              className="mb-8 sm:mb-12 md:mb-16 p-4 sm:p-8 md:p-10 rounded-3xl bg-gray-800/30 backdrop-blur-lg border border-blue-300/20 shadow-xl transform perspective-1000 hover:-translate-y-2"
               style={{ boxShadow: '0 0 15px rgba(147, 197, 253, 0.2)' }}
             >
-              <h2 className="text-4xl font-bold text-blue-200 mb-8 flex items-center gap-4">
-                <span className="w-4 h-4 rounded-full bg-blue-400 animate-pulse"></span>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-200 mb-4 sm:mb-6 md:mb-8 flex items-center gap-3 sm:gap-4">
+                <span className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-blue-400 animate-pulse"></span>
                 {section.type}
               </h2>
-              <div className="relative pl-10">
-                <svg className="absolute left-2 top-0 h-full w-4" viewBox="0 0 4 100" preserveAspectRatio="none">
+              <div className="relative pl-6 sm:pl-10">
+                <svg className="absolute left-1 sm:left-2 top-0 h-full w-3 sm:w-4" viewBox="0 0 4 100" preserveAspectRatio="none">
                   <path d="M2 0v100" stroke="#93c5fd" strokeWidth="2" strokeDasharray="4,4" className="animate-[dash_2s_linear_infinite]" />
                 </svg>
                 {section.items.map((item, i) => (
@@ -185,19 +185,19 @@ const About = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.8, delay: i * 0.3 }}
-                    className="mb-10 relative group"
+                    className="mb-6 sm:mb-8 md:mb-10 relative group"
                   >
-                    <div className="absolute -left-5 top-3 w-8 h-8 bg-blue-500 rounded-full border-4 border-gray-800 group-hover:animate-ping" style={{ boxShadow: '0 0 10px rgba(147, 197, 253, 0.5)' }}></div>
-                    <div className="ml-10 p-6 rounded-xl bg-gray-900/20 group-hover:bg-gray-900/40 transition-colors">
-                      <div className="text-2xl font-semibold text-blue-200 flex items-center gap-4">
+                    <div className="absolute -left-4 sm:-left-5 top-2 sm:top-3 w-6 h-6 sm:w-8 sm:h-8 bg-blue-500 rounded-full border-4 border-gray-800 group-hover:animate-ping" style={{ boxShadow: '0 0 10px rgba(147, 197, 253, 0.5)' }}></div>
+                    <div className="ml-7 sm:ml-10 p-4 sm:p-6 rounded-xl bg-gray-900/20 group-hover:bg-gray-900/40 transition-colors">
+                      <div className="text-lg sm:text-2xl font-semibold text-blue-200 flex items-center gap-2 sm:gap-4">
                         {item.title}
                         {item.link && (
                           <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline hover:text-blue-300">View</a>
                         )}
                       </div>
-                      <div className="text-gray-300 text-base font-medium">{item.org || item.period}</div>
-                      <div className="text-blue-300 text-sm mb-2">{item.period && item.org ? item.period : item.details}</div>
-                      <div className="text-gray-400 text-base">{item.details}</div>
+                      <div className="text-gray-300 text-sm sm:text-base font-medium">{item.org || item.period}</div>
+                      <div className="text-blue-300 text-xs sm:text-sm mb-1 sm:mb-2">{item.period && item.org ? item.period : item.details}</div>
+                      <div className="text-gray-400 text-xs sm:text-base">{item.details}</div>
                     </div>
                   </motion.div>
                 ))}
@@ -207,20 +207,20 @@ const About = () => {
         </div>
 
         {/* Skills */}
-        <div className="w-full max-w-5xl mb-20">
+        <div className="w-full max-w-lg sm:max-w-2xl md:max-w-5xl mb-10 sm:mb-16 md:mb-20">
           <motion.div
             initial={{ opacity: 0, y: 150 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1 }}
-            className="p-10 rounded-3xl bg-gray-800/30 backdrop-blur-lg border border-blue-300/20 shadow-xl transform perspective-1000 hover:-translate-y-2"
+            className="p-4 sm:p-8 md:p-10 rounded-3xl bg-gray-800/30 backdrop-blur-lg border border-blue-300/20 shadow-xl transform perspective-1000 hover:-translate-y-2"
             style={{ boxShadow: '0 0 15px rgba(147, 197, 253, 0.2)' }}
           >
-            <h2 className="text-4xl font-bold text-blue-200 mb-8 flex items-center gap-4">
-              <span className="w-4 h-4 rounded-full bg-blue-400 animate-pulse"></span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-200 mb-4 sm:mb-6 md:mb-8 flex items-center gap-3 sm:gap-4">
+              <span className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-blue-400 animate-pulse"></span>
               Technical Skills
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-8 mb-6 sm:mb-10">
               {skills.map((skill, idx) => (
                 <motion.div
                   key={skill.name}
@@ -229,13 +229,13 @@ const About = () => {
                   viewport={{ once: true }}
                   transition={{ duration: 0.8, delay: idx * 0.1 }}
                   whileHover={{ rotateX: 5, rotateY: 5 }}
-                  className="p-6 rounded-xl bg-gray-900/30 hover:bg-gray-900/50 transition-colors border border-blue-400/10"
+                  className="p-4 sm:p-6 rounded-xl bg-gray-900/30 hover:bg-gray-900/50 transition-colors border border-blue-400/10"
                 >
-                  <div className="flex justify-between items-center mb-3">
-                    <span className="text-blue-200 font-semibold text-lg">{skill.name}</span>
+                  <div className="flex justify-between items-center mb-2 sm:mb-3">
+                    <span className="text-blue-200 font-semibold text-base sm:text-lg">{skill.name}</span>
                     <span className="text-blue-400 font-bold">{skill.level}%</span>
                   </div>
-                  <div className="h-3 bg-gray-700 rounded-full overflow-hidden">
+                  <div className="h-2 sm:h-3 bg-gray-700 rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       whileInView={{ width: `${skill.level}%` }}
@@ -248,8 +248,8 @@ const About = () => {
                 </motion.div>
               ))}
             </div>
-            <h3 className="text-2xl font-bold text-blue-200 mb-6">Security Tools</h3>
-            <div className="flex flex-wrap gap-4">
+            <h3 className="text-lg sm:text-2xl font-bold text-blue-200 mb-4 sm:mb-6">Security Tools</h3>
+            <div className="flex flex-wrap gap-2 sm:gap-4">
               {securityTools.map((tool, idx) => (
                 <motion.span
                   key={tool}
@@ -258,7 +258,7 @@ const About = () => {
                   viewport={{ once: true }}
                   transition={{ type: 'spring', stiffness: 400, delay: idx * 0.1 }}
                   whileHover={{ scale: 1.2, rotate: 10 }}
-                  className="px-5 py-2 bg-blue-900/50 text-blue-200 rounded-full font-semibold border border-blue-300/30 hover:bg-blue-900/70"
+                  className="px-3 py-1 sm:px-5 sm:py-2 bg-blue-900/50 text-blue-200 rounded-full font-semibold border border-blue-300/30 hover:bg-blue-900/70"
                   style={{ boxShadow: '0 0 8px rgba(147, 197, 253, 0.3)' }}
                 >
                   {tool}
@@ -269,20 +269,20 @@ const About = () => {
         </div>
 
         {/* Certifications & Achievements */}
-        <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-10 mb-20">
+        <div className="w-full max-w-lg sm:max-w-2xl md:max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-10 mb-10 sm:mb-16 md:mb-20">
           <motion.div
             initial={{ opacity: 0, x: -150 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1 }}
-            className="p-10 rounded-3xl bg-gray-800/30 backdrop-blur-lg border border-blue-300/20 shadow-xl transform perspective-1000 hover:-translate-y-2"
+            className="p-4 sm:p-8 md:p-10 rounded-3xl bg-gray-800/30 backdrop-blur-lg border border-blue-300/20 shadow-xl transform perspective-1000 hover:-translate-y-2"
             style={{ boxShadow: '0 0 15px rgba(147, 197, 253, 0.2)' }}
           >
-            <h2 className="text-3xl font-bold text-blue-200 mb-6 flex items-center gap-4">
-              <span className="w-4 h-4 rounded-full bg-blue-400 animate-pulse"></span>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-200 mb-4 sm:mb-6 flex items-center gap-3 sm:gap-4">
+              <span className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-blue-400 animate-pulse"></span>
               Certifications
             </h2>
-            <ul className="list-disc list-inside text-gray-300 space-y-3 text-base">
+            <ul className="list-disc list-inside text-gray-300 space-y-2 sm:space-y-3 text-sm sm:text-base">
               {certifications.map(cert => (
                 <motion.li
                   key={cert}
@@ -301,14 +301,14 @@ const About = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1 }}
-            className="p-10 rounded-3xl bg-gray-800/30 backdrop-blur-lg border border-blue-300/20 shadow-xl transform perspective-1000 hover:-translate-y-2"
+            className="p-4 sm:p-8 md:p-10 rounded-3xl bg-gray-800/30 backdrop-blur-lg border border-blue-300/20 shadow-xl transform perspective-1000 hover:-translate-y-2"
             style={{ boxShadow: '0 0 15px rgba(147, 197, 253, 0.2)' }}
           >
-            <h2 className="text-3xl font-bold text-blue-200 mb-6 flex items-center gap-4">
-              <span className="w-4 h-4 rounded-full bg-blue-400 animate-pulse"></span>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-200 mb-4 sm:mb-6 flex items-center gap-3 sm:gap-4">
+              <span className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-blue-400 animate-pulse"></span>
               Achievements
             </h2>
-            <ul className="list-disc list-inside text-gray-300 space-y-3 text-base">
+            <ul className="list-disc list-inside text-gray-300 space-y-2 sm:space-y-3 text-sm sm:text-base">
               {achievements.map(ach => (
                 <motion.li
                   key={ach}

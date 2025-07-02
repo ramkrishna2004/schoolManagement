@@ -17,9 +17,9 @@ function MaterialForm() {
     category: 'other',
     topic: '',
     tags: '',
-    isVisible: true
+    isVisible: true,
+    fileUrl: '',
   });
-  const [file, setFile] = useState(null);
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -56,7 +56,8 @@ function MaterialForm() {
         category: material.category,
         topic: material.topic || '',
         tags: material.tags ? material.tags.join(', ') : '',
-        isVisible: material.isVisible
+        isVisible: material.isVisible,
+        fileUrl: material.fileUrl || '',
       });
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to fetch material');
@@ -84,19 +85,6 @@ function MaterialForm() {
     }
   };
 
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    if (selectedFile) {
-      // Validate file size (50MB limit)
-      if (selectedFile.size > 20 * 1024 * 1024) {
-        setError('File size must be less than 20MB');
-        return;
-      }
-      setFile(selectedFile);
-      setError(null);
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -104,12 +92,14 @@ function MaterialForm() {
       setError('Title is required');
       return;
     }
-
-    if (!isEditing && !file) {
-      setError('Please select a file to upload');
+    if (!formData.fileUrl.trim()) {
+      setError('Google Drive link is required');
       return;
     }
-
+    if (!/^https:\/\/(drive|docs)\.google\.com\//.test(formData.fileUrl.trim())) {
+      setError('Please enter a valid Google Drive link.');
+      return;
+    }
     if (!formData.classId) {
       setError('Please select a class');
       return;
@@ -120,34 +110,9 @@ function MaterialForm() {
       setError(null);
 
       if (isEditing) {
-        // Update existing material
         await materialService.updateMaterial(id, formData);
       } else {
-        // Create new material
-        const formDataToSend = new FormData();
-        formDataToSend.append('file', file);
-        formDataToSend.append('title', formData.title);
-        formDataToSend.append('description', formData.description);
-        formDataToSend.append('classId', formData.classId);
-        formDataToSend.append('subjectName', formData.subjectName);
-        formDataToSend.append('category', formData.category);
-        formDataToSend.append('topic', formData.topic);
-        formDataToSend.append('tags', formData.tags);
-        formDataToSend.append('isVisible', formData.isVisible);
-
-        console.log('Form data being sent:', {
-          title: formData.title,
-          description: formData.description,
-          classId: formData.classId,
-          subjectName: formData.subjectName,
-          category: formData.category,
-          topic: formData.topic,
-          tags: formData.tags,
-          isVisible: formData.isVisible,
-          file: file ? file.name : 'No file'
-        });
-
-        await materialService.createMaterial(formDataToSend);
+        await materialService.createMaterial(formData);
       }
 
       navigate('/materials');
@@ -321,23 +286,21 @@ function MaterialForm() {
             </p>
           </div>
 
-          {/* File Upload (only for new materials) */}
-          {!isEditing && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                File *
-              </label>
+          {/* Google Drive Link */}
+          <div className="mb-4">
+            <label htmlFor="fileUrl" className="block text-gray-700 font-semibold mb-2">Google Drive Link</label>
               <input
-                type="file"
-                onChange={handleFileChange}
-                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mov"
+              type="url"
+              id="fileUrl"
+              name="fileUrl"
+              value={formData.fileUrl}
+              onChange={handleInputChange}
+              placeholder="Paste the public Google Drive link here"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              required
               />
-              <p className="mt-1 text-sm text-gray-500">
-                Maximum file size: 50MB. Supported formats: PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX, TXT, Images, Videos
-              </p>
+            <p className="text-xs text-gray-500 mt-1">Make sure the file is set to &quot;Anyone with the link can view&quot; in Google Drive.</p>
             </div>
-          )}
 
           {/* Visibility */}
           <div className="flex items-center">

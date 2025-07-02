@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ClassList from '../components/ClassList';
 import { useAuth } from '../contexts/AuthContext';
+import api from '../config/api';
+
 
 function Classes() {
   const [classes, setClasses] = useState([]);
@@ -16,7 +18,7 @@ function Classes() {
   const fetchClasses = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:5000/api/classes', {
+      const response = await api.get('/api/classes', {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -37,9 +39,9 @@ function Classes() {
     }
 
     try {
-      await axios.delete(`http://localhost:5000/api/classes/${classId}`, {
+      await api.delete(`/api/classes/${classId}`, {
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
       setClasses(classes.filter(c => c._id !== classId));

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import ScoreList from '../../components/ScoreList';
 import { useAuth } from '../../contexts/AuthContext';
+import api from '../../config/api';
+
 
 const Scores = () => {
   const [allScores, setAllScores] = useState([]);
@@ -17,8 +18,8 @@ const Scores = () => {
       try {
         setLoading(true);
         const [classRes, scoreRes] = await Promise.all([
-          axios.get('http://localhost:5000/api/students/enrolled-classes'),
-          axios.get('http://localhost:5000/api/scores')
+          api.get('/api/students/enrolled-classes'),
+          api.get('/api/scores')
         ]);
         
         const fetchedClasses = classRes.data.data || [];

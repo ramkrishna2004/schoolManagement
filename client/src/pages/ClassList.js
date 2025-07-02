@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import api from '../config/api';
+
 
 const PAGE_SIZE = 10;
 
@@ -20,7 +22,7 @@ function ClassList() {
 
   const fetchClasses = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/classes', {
+      const response = await api.get('/api/classes', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -36,7 +38,7 @@ function ClassList() {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this class?')) {
       try {
-        await axios.delete(`http://localhost:5000/api/classes/${id}`, {
+        await api.delete(`/api/classes/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }

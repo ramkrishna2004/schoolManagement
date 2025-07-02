@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import ScoreList from '../components/ScoreList';
+import api from '../config/api';
+
 
 function ScoreListPage() {
   const [scores, setScores] = useState([]);
@@ -17,7 +18,7 @@ function ScoreListPage() {
 
   const fetchScores = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/scores', {
+      const response = await api.get('/api/scores', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }

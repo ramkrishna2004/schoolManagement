@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import AnimatedInput from './AnimatedInput';
 
 const testTypes = ['Unit Test', 'Mid Term', 'Final', 'Quiz'];
 
@@ -40,8 +41,8 @@ const OfflineTestForm = ({ onTestCreated }) => {
   return (
     <form onSubmit={handleSubmit} className="p-4 bg-white rounded shadow max-w-md mx-auto">
       <h2 className="text-xl font-bold mb-4">Create Offline Test</h2>
-      <input name="testTitle" value={form.testTitle} onChange={handleChange} placeholder="Test Title" required className="input mb-2" />
-      <input name="subjectName" value={form.subjectName} onChange={handleChange} placeholder="Subject" required className="input mb-2" />
+      <AnimatedInput name="testTitle" value={form.testTitle} onChange={handleChange} label="Test Title" required className="mb-2" />
+      <AnimatedInput name="subjectName" value={form.subjectName} onChange={handleChange} label="Subject" required className="mb-2" />
       <select name="classId" value={form.classId} onChange={handleChange} required className="input mb-2">
         <option value="">Select Class</option>
         {classes.map(cls => <option key={cls._id} value={cls._id}>{cls.className}</option>)}
@@ -50,13 +51,13 @@ const OfflineTestForm = ({ onTestCreated }) => {
         <option value="">Select Test Type</option>
         {testTypes.map(t => <option key={t} value={t}>{t}</option>)}
       </select>
-      <input name="totalMarks" type="number" value={form.totalMarks} onChange={handleChange} placeholder="Total Marks" required className="input mb-2" min={1} />
-      <input name="passingMarks" type="number" value={form.passingMarks} onChange={handleChange} placeholder="Passing Marks" required className="input mb-2" min={0} />
-      <input name="duration" type="number" value={form.duration} onChange={handleChange} placeholder="Duration (minutes)" required className="input mb-2" min={1} />
-      <input name="scheduledDate" type="date" value={form.scheduledDate} onChange={handleChange} required className="input mb-2" />
-      <input name="startTime" type="time" value={form.startTime} onChange={handleChange} required className="input mb-2" />
-      <input name="endTime" type="time" value={form.endTime} onChange={handleChange} required className="input mb-2" />
-      <button type="submit" className="btn btn-primary" disabled={loading}>{loading ? 'Creating...' : 'Create Test'}</button>
+      <AnimatedInput name="totalMarks" type="number" value={form.totalMarks} onChange={handleChange} label="Total Marks" required className="mb-2" min={1} />
+      <AnimatedInput name="passingMarks" type="number" value={form.passingMarks} onChange={handleChange} label="Passing Marks" required className="mb-2" min={0} />
+      <AnimatedInput name="duration" type="number" value={form.duration} onChange={handleChange} label="Duration (minutes)" required className="mb-2" min={1} />
+      <AnimatedInput name="scheduledDate" type="date" value={form.scheduledDate} onChange={handleChange} label="Scheduled Date" required className="mb-2" />
+      <AnimatedInput name="startTime" type="time" value={form.startTime} onChange={handleChange} label="Start Time" required className="mb-2" />
+      <AnimatedInput name="endTime" type="time" value={form.endTime} onChange={handleChange} label="End Time" required className="mb-2" />
+      <button type="submit" className="px-5 py-2 text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-blue-400 rounded-lg shadow hover:from-indigo-600 hover:to-blue-500 focus:outline-none focus:ring-2 focus:ring-indigo-400" disabled={loading}>{loading ? 'Creating...' : 'Create Test'}</button>
       {msg && <div className="mt-2 text-sm text-blue-600">{msg}</div>}
     </form>
   );

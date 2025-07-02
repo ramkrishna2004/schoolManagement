@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import ScheduleForm from './ScheduleForm';
 import ScheduleList from './ScheduleList';
 import ScheduleCalendar from './ScheduleCalendar';
+import api from '../config/api';
+
 
 function ClassSchedule() {
   const [schedules, setSchedules] = useState([]);
@@ -21,7 +22,7 @@ function ClassSchedule() {
 
   const fetchSchedules = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/schedules', {
+      const response = await api.get('/api/schedules', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -36,7 +37,7 @@ function ClassSchedule() {
 
   const handleCreateSchedule = async (scheduleData) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/schedules', scheduleData, {
+      const response = await api.post('/api/schedules', scheduleData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -50,7 +51,7 @@ function ClassSchedule() {
 
   const handleUpdateSchedule = async (id, scheduleData) => {
     try {
-      const response = await axios.put(`http://localhost:5000/api/schedules/${id}`, scheduleData, {
+      const response = await api.put(`/api/schedules/${id}`, scheduleData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -68,7 +69,7 @@ function ClassSchedule() {
   const handleDeleteSchedule = async (id) => {
     if (window.confirm('Are you sure you want to delete this schedule?')) {
       try {
-        await axios.delete(`http://localhost:5000/api/schedules/${id}`, {
+        await api.delete(`/api/schedules/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }

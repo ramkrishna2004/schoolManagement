@@ -12,10 +12,24 @@ exports.getStudents = async (req, res) => {
 
     // Scope by adminId
     const students = await adminScopedQuery(Student, req, query).select('-password');
+    // Get all student IDs
+    const studentIds = students.map(s => s._id);
+    // Fetch corresponding users with role 'student' and matching roleId
+    const User = require('../models/User');
+    const users = await User.find({ role: 'student', roleId: { $in: studentIds } }).select('rollno roleId');
+    // Map roleId to rollno for quick lookup
+    const rollnoMap = {};
+    users.forEach(u => { rollnoMap[u.roleId.toString()] = u.rollno; });
+    // Attach rollno to each student
+    const studentsWithRollno = students.map(s => {
+      const obj = s.toObject();
+      obj.rollno = rollnoMap[s._id.toString()] || '';
+      return obj;
+    });
     res.json({
       success: true,
-      count: students.length,
-      data: students
+      count: studentsWithRollno.length,
+      data: studentsWithRollno
     });
   } catch (error) {
     res.status(500).json({
@@ -119,12 +133,7 @@ exports.updateStudent = async (req, res) => {
       ...(extraDetails && { extraDetails })
     };
 
-    // If password is provided, hash it
-    if (password) {
-      const salt = await bcrypt.genSalt(10);
-      updateData.password = await bcrypt.hash(password, salt);
-    }
-
+    // Update Student info (not password)
     const student = await Student.findByIdAndUpdate(
       req.params.id,
       updateData,
@@ -141,6 +150,16 @@ exports.updateStudent = async (req, res) => {
       });
     }
 
+    // If password is provided, update it in the User collection
+    if (password) {
+      const User = require('../models/User');
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await User.findOneAndUpdate(
+        { role: 'student', roleId: req.params.id },
+        { password: hashedPassword }
+      );
+    }
+
     res.json({
       success: true,
       data: student
@@ -153,16 +172,13 @@ exports.updateStudent = async (req, res) => {
   }
 };
 
-// @desc    Delete student (soft delete)
+// @desc    Delete student (hard delete)
 // @route   DELETE /api/students/:id
 // @access  Private/Admin
 exports.deleteStudent = async (req, res) => {
   try {
-    const student = await Student.findByIdAndUpdate(
-      req.params.id,
-      { isActive: false },
-      { new: true }
-    ).select('-password');
+    // Hard delete Student
+    const student = await Student.findByIdAndDelete(req.params.id);
 
     if (!student) {
       return res.status(404).json({
@@ -170,6 +186,18 @@ exports.deleteStudent = async (req, res) => {
         error: 'Student not found'
       });
     }
+
+    // Hard delete corresponding User
+    const User = require('../models/User');
+    await User.deleteOne({ role: 'student', roleId: req.params.id });
+
+    // Hard delete all related Scores
+    const Score = require('../models/Score');
+    await Score.deleteMany({ studentId: req.params.id });
+
+    // Hard delete all related StudentTestAttempts
+    const StudentTestAttempt = require('../models/StudentTestAttempt');
+    await StudentTestAttempt.deleteMany({ studentId: req.params.id });
 
     res.json({
       success: true,

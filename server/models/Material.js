@@ -14,18 +14,6 @@ const materialSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please provide file URL']
   },
-  fileName: {
-    type: String,
-    required: [true, 'Please provide file name']
-  },
-  fileSize: {
-    type: Number,
-    required: [true, 'Please provide file size']
-  },
-  fileType: {
-    type: String,
-    required: [true, 'Please provide file type']
-  },
   classId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Class',

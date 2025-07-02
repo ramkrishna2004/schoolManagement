@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const path = require('path');
 
@@ -36,4 +37,12 @@ app.use('/api/holidays', holidayRoutes);
 // Serve static files from uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); 
 
-app.listen(5000, () => console.log('Server running on port 5000')); 
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'http://192.168.166.91:3000'
+  ],
+  credentials: true
+}));
+
+app.listen(5000,() => console.log('Server running on port 5000')); 

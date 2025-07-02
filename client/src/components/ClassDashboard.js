@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import {
@@ -13,6 +12,8 @@ import {
   ArcElement,
 } from 'chart.js';
 import { Bar, Pie } from 'react-chartjs-2';
+import api from '../config/api';
+
 
 ChartJS.register(
   CategoryScale,
@@ -47,21 +48,21 @@ function ClassDashboard() {
   const fetchDashboardData = async () => {
     try {
       // Fetch classes
-      const classesResponse = await axios.get('http://localhost:5000/api/classes', {
+      const classesResponse = await api.get('/api/classes', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
 
       // Fetch students
-      const studentsResponse = await axios.get('http://localhost:5000/api/students', {
+      const studentsResponse = await api.get('/api/students', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
 
       // Fetch teachers
-      const teachersResponse = await axios.get('http://localhost:5000/api/teachers', {
+      const teachersResponse = await api.get('/api/teachers', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }

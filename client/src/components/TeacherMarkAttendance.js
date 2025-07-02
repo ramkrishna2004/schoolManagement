@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Assignment, CheckCircle } from '@mui/icons-material';
+import api from '../config/api';
 
 const STATUS_OPTIONS = [
   { value: 'Present', color: 'bg-green-100 text-green-700', border: 'border-green-400' },
@@ -21,14 +21,14 @@ function TeacherMarkAttendance({ teacherId }) {
 
 
   useEffect(() => {
-    axios.get('/api/classes', {
+    api.get('/api/classes', {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
     }).then(res => setClasses(res.data.data));
   }, [teacherId]);
 
   useEffect(() => {
     if (classId) {
-      axios.get(`/api/classes/${classId}/students`).then(res => {
+      api.get(`/api/classes/${classId}/students`).then(res => {
         setStudents(res.data);
         setAttendance(res.data.map(s => ({
           studentId: s._id,
@@ -66,7 +66,7 @@ function TeacherMarkAttendance({ teacherId }) {
     e.preventDefault();
 
     try {
-      await axios.post('/api/attendance/mark', {
+      await api.post('/api/attendance/mark', {
         classId, date, attendanceList: attendance, markedBy: teacherId
       });
       setSuccess(true);

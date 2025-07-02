@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../config/api';
 import UserList from '../components/UserList';
 import { useAuth } from '../context/AuthContext';
+
 
 function AdminList() {
   const [admins, setAdmins] = useState([]);
@@ -15,7 +16,7 @@ function AdminList() {
 
   const fetchAdmins = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/admins', {
+      const response = await api.get('/api/admins', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -30,8 +31,8 @@ function AdminList() {
 
   const handleToggleStatus = async (adminId, newStatus) => {
     try {
-      await axios.put(
-        `http://localhost:5000/api/admins/${adminId}`,
+      await api.put(
+        `/api/admins/${adminId}`,
         { isActive: newStatus },
         {
           headers: {

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
+import api from '../../config/api';
+
 
 function Tests() {
   const [tests, setTests] = useState([]);
@@ -16,7 +18,7 @@ function Tests() {
 
   const fetchTests = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/tests', {
+      const response = await api.get('/api/tests', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -73,7 +75,7 @@ function Tests() {
             Create New Test
           </Link>
           <Link
-            to="/teacher/tests/offline/new"
+            to={user?.role === 'admin' ? '/admin/tests/offline/new' : '/teacher/tests/offline/new'}
             className="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
           >
             Create Offline Test

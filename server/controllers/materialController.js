@@ -55,9 +55,10 @@ const upload = multer({
 // Helper to convert file path to public URL
 const makePublicUrl = (filePath) => {
   if (!filePath) return '';
-  // Normalize slashes and remove leading 'uploads/'
+  // If it's already an external URL, return as is
+  if (/^https?:\/\//i.test(filePath)) return filePath;
+  // Otherwise, treat as local file
   const relativePath = filePath.replace(/\\/g, '/').replace(/^uploads\//, '');
-  // Use BASE_URL from env or default to localhost
   const baseUrl = process.env.BASE_URL || 'http://localhost:5000';
   return `${baseUrl}/uploads/materials/${relativePath.replace(/^materials\//, '')}`;
 };
@@ -122,15 +123,28 @@ exports.getMaterials = async (req, res) => {
 
     const total = await totalQuery;
 
-    const materialsWithPublicUrl = materials.map(mat => {
-      const obj = mat.toObject();
-      obj.fileUrl = makePublicUrl(obj.fileUrl);
-      return obj;
-    });
+    // For admin/teacher, add view/download counts
+    let materialsWithCounts = materials;
+    if (req.user.role === 'admin' || req.user.role === 'teacher') {
+      const MaterialAccess = require('../models/MaterialAccess');
+      materialsWithCounts = await Promise.all(materials.map(async (mat) => {
+        const obj = mat.toObject();
+        obj.fileUrl = makePublicUrl(obj.fileUrl);
+        obj.totalViews = await MaterialAccess.countDocuments({ materialId: mat._id, accessType: 'view' });
+        obj.totalDownloads = await MaterialAccess.countDocuments({ materialId: mat._id, accessType: 'download' });
+        return obj;
+      }));
+    } else {
+      materialsWithCounts = materials.map(mat => {
+        const obj = mat.toObject();
+        obj.fileUrl = makePublicUrl(obj.fileUrl);
+        return obj;
+      });
+    }
 
     res.json({
       success: true,
-      data: materialsWithPublicUrl,
+      data: materialsWithCounts,
       totalPages: Math.ceil(total / limitNum),
       currentPage: pageNum,
       total
@@ -182,6 +196,16 @@ exports.getMaterial = async (req, res) => {
           error: 'Access denied'
         });
       }
+      // Track view in MaterialAccess
+      await MaterialAccess.create({
+        materialId: material._id,
+        studentId: req.user.roleId,
+        classId: material.classId._id,
+        adminId: material.adminId,
+        accessType: 'view',
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent')
+      });
     }
 
     // Map fileUrl to public URL
@@ -216,16 +240,20 @@ exports.createMaterial = async (req, res) => {
       // Attach adminId to the material data
       const materialData = attachAdminId(req, {
         ...req.body,
-        fileUrl: req.file ? req.file.path : undefined,
+        fileUrl: req.file ? req.file.path : req.body.fileUrl,
         fileName: req.file ? req.file.originalname : undefined,
         fileSize: req.file ? req.file.size : undefined,
         fileType: req.file ? req.file.mimetype : undefined,
         uploadedBy: req.user.roleId || req.user._id,
         uploadedByModel: req.user.role === 'admin' ? 'Admin' : 'Teacher'
       });
+      // Ensure tags is always an array
+      if (materialData.tags && typeof materialData.tags === 'string') {
+        materialData.tags = materialData.tags.split(',').map(t => t.trim());
+      }
       const material = await Material.create(materialData);
-        res.status(201).json({
-          success: true,
+      res.status(201).json({
+        success: true,
         data: material
       });
     });
@@ -314,11 +342,6 @@ exports.deleteMaterial = async (req, res) => {
       }
     }
 
-    // Delete file from filesystem
-    if (fs.existsSync(material.fileUrl)) {
-      fs.unlinkSync(material.fileUrl);
-    }
-
     // Delete material access records
     await MaterialAccess.deleteMany({ materialId: req.params.id });
 
@@ -341,77 +364,22 @@ exports.deleteMaterial = async (req, res) => {
 // @access  Private
 exports.downloadMaterial = async (req, res) => {
   try {
-    const material = await Material.findById(req.params.id)
-      .populate('classId', 'className');
-
+    const material = await Material.findById(req.params.id);
     if (!material) {
       return res.status(404).json({
         success: false,
         error: 'Material not found'
       });
     }
-
-    // Centralized and safer permission check
-    let hasAccess = false;
-    if (req.user.role === 'admin') {
-      hasAccess = true;
-    } else if (material.classId) { // IMPORTANT: Check if class is assigned
-    if (req.user.role === 'teacher') {
-      const teacherClass = await Class.findOne({ 
-        _id: material.classId._id, 
-        teacherId: req.user.roleId 
-      });
-        if (teacherClass) hasAccess = true;
-    } else if (req.user.role === 'student') {
-      const studentClass = await Class.findOne({ 
-        _id: material.classId._id, 
-        studentIds: req.user.roleId 
-      });
-        if (studentClass && material.isVisible) {
-          hasAccess = true;
-        }
-      }
-    }
-
-    if (!hasAccess) {
-        return res.status(403).json({
-          success: false,
-        error: 'Access denied. You are not authorized to download this material.'
-        });
-      }
-
-    // Record access for students (only if they have access)
-    if (req.user.role === 'student') {
-      await MaterialAccess.create({
-        materialId: material._id,
-        studentId: req.user.roleId,
-        classId: material.classId._id,
-        adminId: material.adminId,
-        accessType: 'download',
-        ipAddress: req.ip,
-        userAgent: req.get('User-Agent')
-      });
-
-      // Increment download count
-      material.downloadCount = (material.downloadCount || 0) + 1;
-      await material.save();
-    }
-
-    // Check if file exists on server
-    if (!material.fileUrl || !fs.existsSync(material.fileUrl)) {
-      console.error(`File not found for material ${material._id}: path ${material.fileUrl}`);
-      return res.status(404).json({
-        success: false,
-        error: 'The file for this material could not be found on the server.'
-      });
-    }
-
-    res.download(material.fileUrl, material.fileName);
+    // Just return the fileUrl for external links
+    res.json({
+      success: true,
+      fileUrl: material.fileUrl
+    });
   } catch (error) {
-    console.error('Download material error:', error); // Better logging
     res.status(500).json({
       success: false,
-      error: 'An unexpected error occurred while trying to download the file.'
+      error: error.message
     });
   }
 };
@@ -463,5 +431,39 @@ exports.getMaterialAnalytics = async (req, res) => {
       success: false,
       error: error.message
     });
+  }
+};
+
+// @desc    Log material access (view/download) for analytics
+// @route   POST /api/materials/:id/access
+// @access  Private (Student only tracked)
+exports.logMaterialAccess = async (req, res) => {
+  try {
+    const { accessType } = req.body;
+    if (!['view', 'download'].includes(accessType)) {
+      return res.status(400).json({ success: false, error: 'Invalid access type' });
+    }
+    const material = await Material.findById(req.params.id);
+    if (!material) {
+      return res.status(404).json({ success: false, error: 'Material not found' });
+    }
+    // Only students are tracked
+    if (req.user.role !== 'student') {
+      return res.status(200).json({ success: true, message: 'Not tracked for this role' });
+    }
+    // Find the classId for this student and material
+    const classId = material.classId;
+    await MaterialAccess.create({
+      materialId: material._id,
+      studentId: req.user.roleId,
+      classId,
+      adminId: material.adminId,
+      accessType,
+      ipAddress: req.ip,
+      userAgent: req.get('User-Agent')
+    });
+    res.status(201).json({ success: true });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 }; 

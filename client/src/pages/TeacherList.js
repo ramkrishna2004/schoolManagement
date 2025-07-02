@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../config/api';
 
 const PAGE_SIZE = 10;
 
-function TeacherList() {
+const TeacherList = () => {
   const [teachers, setTeachers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchTeachers();
@@ -14,29 +16,79 @@ function TeacherList() {
 
   const fetchTeachers = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/teachers');
-      setTeachers(response.data.data);
-    } catch (error) {
-      console.error('Error fetching teachers:', error);
+      const response = await api.get('/api/teachers');
+      setTeachers(response.data.data || []);
+      setLoading(false);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Error fetching teachers');
+      setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/teachers/${id}`);
-      fetchTeachers();
-    } catch (error) {
-      console.error('Error deleting teacher:', error);
+      await api.delete(`/api/teachers/${id}`);
+      setTeachers(teachers.filter(teacher => teacher._id !== id));
+    } catch (err) {
+      setError(err.response?.data?.message || 'Error deleting teacher');
     }
   };
 
   const paginatedTeachers = teachers.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
   const totalPages = Math.ceil(teachers.length / PAGE_SIZE);
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50 border-l-4 border-red-400 p-4">
+        <div className="flex">
+          <div className="flex-shrink-0">
+            <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+            </svg>
+          </div>
+          <div className="ml-3">
+            <p className="text-sm text-red-700">{error}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div>
+    <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8 text-sky-800">Teachers</h1>
-      <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-sky-100">
+
+      {/* Mobile View - Card Layout */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:hidden gap-4">
+        {paginatedTeachers.map((teacher) => (
+          <div key={teacher._id} className="bg-white rounded-lg shadow-md p-4 border border-sky-100">
+            <div className="font-bold text-lg text-blue-900 mb-2">{teacher.name}</div>
+            <div className="text-sm text-gray-600">Age: {teacher.age}</div>
+            <div className="text-sm text-gray-600">Email: {teacher.email}</div>
+            <div className="text-sm text-gray-600">Contact: {teacher.extraDetails?.contact}</div>
+            <div className="text-sm text-gray-600">Qualifications: {teacher.extraDetails?.qualifications}</div>
+            <div className="mt-4">
+              <button
+                onClick={() => handleDelete(teacher._id)}
+                className="w-full bg-red-100 text-red-700 px-3 py-1 rounded-lg shadow hover:bg-red-200 transition"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop View - Table Layout */}
+      <div className="hidden md:block bg-white rounded-2xl shadow-lg overflow-x-auto border border-sky-100">
         <table className="min-w-full divide-y divide-sky-100">
           <thead className="bg-sky-100">
             <tr>
@@ -69,6 +121,7 @@ function TeacherList() {
           </tbody>
         </table>
       </div>
+
       {/* Pagination Controls */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center gap-2 mt-6">
@@ -91,6 +144,6 @@ function TeacherList() {
       )}
     </div>
   );
-}
+};
 
 export default TeacherList; 

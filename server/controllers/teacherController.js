@@ -132,7 +132,7 @@ exports.updateTeacher = async (req, res) => {
   }
 };
 
-// @desc    Delete teacher (soft delete)
+// @desc    Delete teacher (hard delete)
 // @route   DELETE /api/teachers/:id
 // @access  Private/Admin
 exports.deleteTeacher = async (req, res) => {
@@ -142,15 +142,15 @@ exports.deleteTeacher = async (req, res) => {
     }
     const adminId = req.user._id;
 
-    const teacher = await Teacher.findOneAndUpdate(
-      { _id: req.params.id, adminId },
-      { isActive: false },
-      { new: true }
-    ).select('-password');
+    // Hard delete Teacher
+    const teacher = await Teacher.findOneAndDelete({ _id: req.params.id, adminId });
 
     if (!teacher) {
       return res.status(404).json({ success: false, error: 'Teacher not found in your organization' });
     }
+
+    // Hard delete corresponding User
+    await User.deleteOne({ role: 'teacher', roleId: req.params.id });
 
     res.json({ success: true, data: {} });
   } catch (error) {
@@ -230,17 +230,13 @@ exports.updateTeacherFull = async (req, res) => {
   }
 };
 
-// @desc    Delete teacher and corresponding user (soft delete)
+// @desc    Delete teacher and corresponding user (hard delete)
 // @route   DELETE /api/teachers/:id/full
 // @access  Private/Admin
 exports.deleteTeacherFull = async (req, res) => {
   try {
-    // Soft delete Teacher
-    const teacher = await Teacher.findByIdAndUpdate(
-      req.params.id,
-      { isActive: false },
-      { new: true }
-    ).select('-password');
+    // Hard delete Teacher
+    const teacher = await Teacher.findByIdAndDelete(req.params.id);
 
     if (!teacher) {
       return res.status(404).json({
@@ -249,12 +245,8 @@ exports.deleteTeacherFull = async (req, res) => {
       });
     }
 
-    // Soft delete corresponding User
-    const user = await User.findOneAndUpdate(
-      { role: 'teacher', roleId: req.params.id },
-      { isActive: false },
-      { new: true }
-    );
+    // Hard delete corresponding User
+    const user = await User.findOneAndDelete({ role: 'teacher', roleId: req.params.id });
 
     res.json({
       success: true,

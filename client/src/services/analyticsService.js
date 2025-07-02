@@ -1,4 +1,4 @@
-import axios from 'axios';
+import api from '../config/api';
 
 const API_URL = '/api/analytics';
 
@@ -9,19 +9,22 @@ const getAuthHeaders = () => {
 
 export const analyticsService = {
   getStudentAnalytics: async () => {
-    const response = await axios.get(`${API_URL}/student`, getAuthHeaders());
+    const response = await api.get(`${API_URL}/student`, getAuthHeaders());
     return response.data.data;
   },
   getClassAnalytics: async (classId) => {
-    const response = await axios.get(`${API_URL}/class/${classId}`, getAuthHeaders());
+    const response = await api.get(`${API_URL}/class/${classId}`, getAuthHeaders());
     return response.data.data;
   },
-  getAllAnalytics: async () => {
-    const response = await axios.get(`${API_URL}/all`, getAuthHeaders());
+  getAllAnalytics: async ({ startDate, endDate }) => {
+    console.log('API call params:', { startDate, endDate });
+    const response = await api.get('/api/analytics/all', {
+      params: { startDate, endDate }
+    });
     return response.data.data;
   },
   getStudentAnalyticsById: async (studentId) => {
-    const response = await axios.get(`${API_URL}/student/${studentId}`, getAuthHeaders());
+    const response = await api.get(`${API_URL}/student/${studentId}`, getAuthHeaders());
     return response.data.data;
   },
 }; 

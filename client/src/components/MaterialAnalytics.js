@@ -86,7 +86,7 @@ function MaterialAnalytics() {
             <span className="font-medium">Subject:</span> {material.classId.subjectName}
           </div>
           <div>
-            <span className="font-medium">File Size:</span> {formatFileSize(material.fileSize)}
+            <span className="font-medium">File Size:</span> {material.fileSize ? formatFileSize(material.fileSize) : 'N/A'}
           </div>
           <div>
             <span className="font-medium">Uploaded:</span> {formatDate(material.createdAt)}
@@ -96,6 +96,20 @@ function MaterialAnalytics() {
         {material.description && (
           <p className="mt-4 text-gray-600">{material.description}</p>
         )}
+        <div className="mt-4 flex gap-3">
+          <button
+            onClick={() => window.open(material.fileUrl, '_blank', 'noopener,noreferrer')}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow"
+          >
+            View
+          </button>
+          <button
+            onClick={() => window.open(material.fileUrl, '_blank', 'noopener,noreferrer')}
+            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow"
+          >
+            Download
+          </button>
+        </div>
       </div>
 
       {/* Analytics Overview */}

@@ -32,13 +32,13 @@ function ScheduleList({ schedules, onEdit, onDelete, selectedDay, onDaySelect })
   return (
     <div className="bg-white shadow-2xl rounded-3xl border-2 border-sky-200 overflow-hidden">
       <div className="px-4 py-5 sm:px-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <h3 className="text-2xl font-bold text-sky-800">Schedule List</h3>
-          <div className="flex space-x-4">
+          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 w-full md:w-auto">
             <select
               value={selectedClass}
               onChange={(e) => setSelectedClass(e.target.value)}
-              className="block w-48 pl-3 pr-10 py-2 text-base border-sky-200 focus:outline-none focus:ring-sky-400 focus:border-sky-400 sm:text-sm rounded-md"
+              className="block w-full md:w-48 pl-3 pr-10 py-2 text-base border-sky-200 focus:outline-none focus:ring-sky-400 focus:border-sky-400 sm:text-sm rounded-md"
             >
               <option value="All">All Classes</option>
               {uniqueClasses.map(className => (
@@ -48,7 +48,7 @@ function ScheduleList({ schedules, onEdit, onDelete, selectedDay, onDaySelect })
             <select
               value={selectedDay}
               onChange={(e) => onDaySelect(e.target.value)}
-              className="block w-48 pl-3 pr-10 py-2 text-base border-sky-200 focus:outline-none focus:ring-sky-400 focus:border-sky-400 sm:text-sm rounded-md"
+              className="block w-full md:w-48 pl-3 pr-10 py-2 text-base border-sky-200 focus:outline-none focus:ring-sky-400 focus:border-sky-400 sm:text-sm rounded-md"
             >
               <option value="All">All Days</option>
               {daysOfWeek.map(day => (
@@ -60,8 +60,60 @@ function ScheduleList({ schedules, onEdit, onDelete, selectedDay, onDaySelect })
       </div>
 
       <div className="border-t border-sky-100">
-        {selectedClass === 'All' ? (
-          // Show schedules grouped by class
+        {/* Mobile View - Card Layout */}
+        <div className="md:hidden">
+          {Object.entries(schedulesByClass).map(([className, classSchedules]) => (
+            <div key={className} className="border-b border-sky-100 last:border-b-0">
+              <div className="bg-sky-50 px-4 py-3">
+                <h4 className="text-lg font-bold text-sky-800">{className}</h4>
+              </div>
+              <div className="p-4 space-y-4">
+                {classSchedules.length === 0 ? (
+                  <div className="text-center py-4 text-gray-500">No schedules found for this class.</div>
+                ) : (
+                  classSchedules.map((schedule) => (
+                    <div key={schedule._id} className="bg-white rounded-xl shadow-lg overflow-hidden border border-sky-100">
+                      <div className="bg-sky-100 px-4 py-2 border-b border-sky-200">
+                        <div className="flex justify-between items-center">
+                          <div className="font-bold text-sky-800">{schedule.dayOfWeek}</div>
+                          <div className="text-sm font-medium text-sky-700">{schedule.startTime} - {schedule.endTime}</div>
+                        </div>
+                      </div>
+                      <div className="p-4">
+                        <div className="text-center">
+                          <div className="text-xl font-bold text-gray-800">{schedule.subject || 'N/A'}</div>
+                          <div className="text-sm text-gray-500 mt-1">
+                            <span>{schedule.teacherId?.name || 'N/A'}</span>
+                            <span className="mx-2">•</span>
+                            <span>Room: {schedule.room}</span>
+                          </div>
+                        </div>
+                        <div className="mt-6 flex gap-3">
+                          <button
+                            onClick={() => onEdit(schedule)}
+                            className="flex-1 bg-yellow-100 text-yellow-800 px-3 py-2 rounded-lg shadow-sm hover:bg-yellow-200 font-semibold transition-all duration-200"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => onDelete(schedule._id)}
+                            className="flex-1 bg-red-100 text-red-800 px-3 py-2 rounded-lg shadow-sm hover:bg-red-200 font-semibold transition-all duration-200"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop View - Table Layout */}
+        <div className="hidden md:block">
+          {selectedClass === 'All' ? (
           Object.entries(schedulesByClass).map(([className, classSchedules]) => (
             <div key={className} className="border-b border-sky-100 last:border-b-0">
               <div className="bg-sky-50 px-6 py-3">
@@ -115,7 +167,6 @@ function ScheduleList({ schedules, onEdit, onDelete, selectedDay, onDaySelect })
             </div>
           ))
         ) : (
-          // Show single class schedule
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-sky-200">
               <thead className="bg-gradient-to-r from-sky-200 to-sky-100">
@@ -162,6 +213,7 @@ function ScheduleList({ schedules, onEdit, onDelete, selectedDay, onDaySelect })
             </table>
           </div>
         )}
+        </div>
       </div>
     </div>
   );

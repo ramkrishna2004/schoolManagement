@@ -436,6 +436,14 @@ function App() {
                   </PrivateRoute>
                 }
               />
+              <Route
+                path="/admin/tests/offline/new"
+                element={
+                  <PrivateRoute roles={['admin']}>
+                    <OfflineTestForm />
+                  </PrivateRoute>
+                }
+              />
             </Routes>
           </main>
           <Footer />

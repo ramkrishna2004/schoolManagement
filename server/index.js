@@ -18,7 +18,10 @@ app.set('trust proxy', 1); // Trust first proxy
 
 // Middleware
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+  origin: true, // Allow all origins (for development)
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -78,7 +81,7 @@ app.use((err, req, res, next) => {
 
 // Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
   // Start announcement cleanup scheduler
   startCleanupScheduler();

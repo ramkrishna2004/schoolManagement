@@ -27,4 +27,7 @@ router.delete('/:id', authorize('admin', 'teacher'), deleteMaterial);
 // Analytics route (admin and teacher only)
 router.get('/:id/analytics', authorize('admin', 'teacher'), getMaterialAnalytics);
 
+// Log material access (view/download)
+router.post('/:id/access', protect, require('../controllers/materialController').logMaterialAccess);
+
 module.exports = router; 

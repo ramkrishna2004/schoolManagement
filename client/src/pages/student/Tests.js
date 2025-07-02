@@ -5,6 +5,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import TestResult from './TestResult';
 import Timer from '../../components/common/Timer';
 import Clock from '../../components/common/Clock';
+import api from '../../config/api';
+
 
 function Tests() {
   const [tests, setTests] = useState([]);
@@ -28,7 +30,7 @@ function Tests() {
 
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:5000/api/tests', {
+      const response = await api.get('/api/tests', {
         headers: {
           Authorization: `Bearer ${token}`
         }

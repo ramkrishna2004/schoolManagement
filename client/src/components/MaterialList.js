@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { materialService } from '../services/materialService';
-import { formatFileSize, formatDate } from '../utils/formatters';
+import {  formatDate } from '../utils/formatters';
 
 function MaterialList() {
   const { user } = useAuth();
@@ -75,22 +75,18 @@ function MaterialList() {
     }
   };
 
+  const handleView = async (material) => {
+    try {
+      await materialService.logMaterialAccess(material._id, 'view');
+    } catch (e) { /* ignore logging errors */ }
+    window.open(material.fileUrl, '_blank', 'noopener,noreferrer');
+  };
+
   const handleDownload = async (material) => {
     try {
-      const response = await materialService.downloadMaterial(material._id);
-      // Use the full response data which is the blob
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      // Use the original filename for the download
-      link.setAttribute('download', material.fileName || 'download');
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    } catch (err) {
-      setError(err.response?.data?.error || 'Failed to download material. Please try again.');
-      console.error('Download error:', err);
-    }
+      await materialService.logMaterialAccess(material._id, 'download');
+    } catch (e) { /* ignore logging errors */ }
+    window.open(material.fileUrl, '_blank', 'noopener,noreferrer');
   };
 
   const getCategoryColor = (category) => {
@@ -196,14 +192,19 @@ function MaterialList() {
               <th className="px-6 py-3 text-left text-xs font-bold text-sky-700 uppercase tracking-wider">Title</th>
               <th className="px-6 py-3 text-left text-xs font-bold text-sky-700 uppercase tracking-wider">Category</th>
               <th className="px-6 py-3 text-left text-xs font-bold text-sky-700 uppercase tracking-wider">Class</th>
-              <th className="px-6 py-3 text-left text-xs font-bold text-sky-700 uppercase tracking-wider">Size</th>
               <th className="px-6 py-3 text-left text-xs font-bold text-sky-700 uppercase tracking-wider">Uploaded</th>
+              {(user.role === 'admin' || user.role === 'teacher') && (
+                <>
+                  <th className="px-6 py-3 text-left text-xs font-bold text-sky-700 uppercase tracking-wider">Views</th>
+                  <th className="px-6 py-3 text-left text-xs font-bold text-sky-700 uppercase tracking-wider">Downloads</th>
+                </>
+              )}
               <th className="px-6 py-3 text-left text-xs font-bold text-sky-700 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
           <tbody>
             {materials.length === 0 ? (
-              <tr><td colSpan={6} className="px-6 py-4 text-center text-gray-500">No materials found</td></tr>
+              <tr><td colSpan={user.role === 'admin' || user.role === 'teacher' ? 7 : 5} className="px-6 py-4 text-center text-gray-500">No materials found</td></tr>
             ) : (
               materials.map((material, idx) => (
                 <tr key={material._id} className={idx % 2 === 0 ? 'bg-white' : 'bg-sky-50 hover:bg-blue-50 transition'}>
@@ -212,17 +213,20 @@ function MaterialList() {
                     <span className={`px-2 py-1 rounded-full text-xs font-semibold shadow-sm ${getCategoryColor(material.category)}`}>{material.category.replace('_', ' ')}</span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-blue-800">{material.classId?.className || '-'}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-blue-800">{formatFileSize(material.fileSize)}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-blue-700">{formatDate(material.createdAt)}</td>
+                  {(user.role === 'admin' || user.role === 'teacher') && (
+                    <>
+                      <td className="px-6 py-4 whitespace-nowrap text-blue-800">{typeof material.totalViews === 'number' ? material.totalViews : '-'}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-blue-800">{typeof material.totalDownloads === 'number' ? material.totalDownloads : '-'}</td>
+                    </>
+                  )}
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-2">
-                    <a
-                      href={material.fileUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      onClick={() => handleView(material)}
                       className="bg-sky-100 text-sky-800 px-3 py-1 rounded-lg shadow hover:bg-sky-200 transition"
                     >
                       View
-                    </a>
+                    </button>
                     <button
                       onClick={() => handleDownload(material)}
                       className="bg-green-100 text-green-800 px-3 py-1 rounded-lg shadow hover:bg-green-200 transition"

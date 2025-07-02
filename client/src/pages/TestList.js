@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import api from '../config/api';
+
 
 const PAGE_SIZE = 10;
 
@@ -20,7 +22,7 @@ function TestList() {
 
   const fetchTests = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/tests', {
+      const response = await api.get('/api/tests', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -96,6 +98,14 @@ function TestList() {
             Add Test
           </Link>
         )}
+        {user.role === 'admin' && (
+          <Link
+            to="/admin/tests/offline/new"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition ml-2"
+          >
+            Create Offline Test
+          </Link>
+        )}
       </div>
 
       <div className="mb-4">
@@ -108,66 +118,70 @@ function TestList() {
         />
       </div>
 
-      <div className="bg-white shadow-2xl rounded-3xl overflow-hidden border-2 border-sky-200">
-        <table className="min-w-full divide-y divide-sky-200">
-          <thead className="bg-gradient-to-r from-sky-200 to-sky-100">
-            <tr>
-              <th className="px-8 py-4 text-left text-sm font-extrabold text-sky-800 uppercase tracking-widest">Title</th>
-              <th className="px-8 py-4 text-left text-sm font-extrabold text-sky-800 uppercase tracking-widest">Subject</th>
-              <th className="px-8 py-4 text-left text-sm font-extrabold text-sky-800 uppercase tracking-widest">Class</th>
-              <th className="px-8 py-4 text-left text-sm font-extrabold text-sky-800 uppercase tracking-widest">Scheduled Date</th>
-              <th className="px-8 py-4 text-left text-sm font-extrabold text-sky-800 uppercase tracking-widest">Start Time</th>
-              <th className="px-8 py-4 text-left text-sm font-extrabold text-sky-800 uppercase tracking-widest">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedTests.map((test, idx) => (
-              <tr key={test._id} className={idx % 2 === 0 ? 'bg-white' : 'bg-sky-50 hover:bg-sky-100 transition'}>
-                <td className="px-8 py-5 whitespace-nowrap text-blue-900 font-semibold text-base">{test.title}</td>
-                <td className="px-8 py-5 whitespace-nowrap text-blue-800 text-base">{test.subject}</td>
-                <td className="px-8 py-5 whitespace-nowrap text-blue-800 text-base">{test.class?.name || 'Not Assigned'}</td>
-                <td className="px-8 py-5 whitespace-nowrap text-blue-700 text-base">{test.scheduledDate ? new Date(test.scheduledDate).toLocaleDateString() : ''}</td>
-                <td className="px-8 py-5 whitespace-nowrap text-blue-700 text-base">{test.startTime || '-'}</td>
-                <td className="px-8 py-5 whitespace-nowrap text-sm font-medium flex gap-3">
-                  <Link
-                    to={`/tests/${test._id}`}
-                    className="bg-sky-200 text-sky-900 px-4 py-2 rounded-xl shadow hover:bg-sky-300 font-semibold transition text-base"
-                  >
-                    View
-                  </Link>
-                  {test.testType === 'offline' && (
-                    <Link
-                      to={
-                        user.role === 'admin'
-                          ? `/admin/tests/${test._id}/score-entry`
-                          : `/teacher/tests/${test._id}/score-entry`
-                      }
-                      className="bg-green-200 text-green-900 px-4 py-2 rounded-xl shadow hover:bg-green-300 font-semibold transition text-base"
-                    >
-                      Enter Score
-                    </Link>
-                  )}
-                  {user.role === 'teacher' && (
-                    <>
-                      <Link
-                        to={`/tests/${test._id}/edit`}
-                        className="bg-yellow-200 text-yellow-900 px-4 py-2 rounded-xl shadow hover:bg-yellow-300 font-semibold transition text-base"
-                      >
-                        Edit
-                      </Link>
-                      <button
-                        onClick={() => handleDelete(test._id)}
-                        className="bg-red-200 text-red-800 px-4 py-2 rounded-xl shadow hover:bg-red-300 font-semibold transition text-base"
-                      >
-                        Delete
-                      </button>
-                    </>
-                  )}
-                </td>
+      <div className="bg-white shadow-2xl rounded-3xl overflow-hidden border-2 border-sky-200 w-full">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-sky-200">
+            <thead className="bg-gradient-to-r from-sky-200 to-sky-100">
+              <tr>
+                <th className="px-4 sm:px-8 py-4 text-left text-xs sm:text-sm font-extrabold text-sky-800 uppercase tracking-widest">Title</th>
+                <th className="px-4 sm:px-8 py-4 text-left text-xs sm:text-sm font-extrabold text-sky-800 uppercase tracking-widest">Subject</th>
+                <th className="px-4 sm:px-8 py-4 text-left text-xs sm:text-sm font-extrabold text-sky-800 uppercase tracking-widest hidden md:table-cell">Class</th>
+                <th className="px-4 sm:px-8 py-4 text-left text-xs sm:text-sm font-extrabold text-sky-800 uppercase tracking-widest hidden lg:table-cell">Scheduled Date</th>
+                <th className="px-4 sm:px-8 py-4 text-left text-xs sm:text-sm font-extrabold text-sky-800 uppercase tracking-widest hidden lg:table-cell">Start Time</th>
+                <th className="px-4 sm:px-8 py-4 text-left text-xs sm:text-sm font-extrabold text-sky-800 uppercase tracking-widest">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {paginatedTests.map((test, idx) => (
+                <tr key={test._id} className={idx % 2 === 0 ? 'bg-white' : 'bg-sky-50 hover:bg-sky-100 transition'}>
+                  <td className="px-4 sm:px-8 py-5 whitespace-nowrap text-blue-900 font-semibold text-xs sm:text-base">{test.title}</td>
+                  <td className="px-4 sm:px-8 py-5 whitespace-nowrap text-blue-800 text-xs sm:text-base">{test.subject}</td>
+                  <td className="px-4 sm:px-8 py-5 whitespace-nowrap text-blue-800 text-xs sm:text-base hidden md:table-cell">{test.class?.name || 'Not Assigned'}</td>
+                  <td className="px-4 sm:px-8 py-5 whitespace-nowrap text-blue-700 text-xs sm:text-base hidden lg:table-cell">{test.scheduledDate ? new Date(test.scheduledDate).toLocaleDateString() : ''}</td>
+                  <td className="px-4 sm:px-8 py-5 whitespace-nowrap text-blue-700 text-xs sm:text-base hidden lg:table-cell">{test.startTime || '-'}</td>
+                  <td className="px-4 sm:px-8 py-5 whitespace-nowrap text-sm font-medium">
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Link
+                        to={`/tests/${test._id}`}
+                        className="bg-sky-200 text-sky-900 px-4 py-2 rounded-xl shadow hover:bg-sky-300 font-semibold transition text-xs sm:text-base text-center"
+                      >
+                        View
+                      </Link>
+                      {test.testType === 'offline' && (
+                        <Link
+                          to={
+                            user.role === 'admin'
+                              ? `/admin/tests/${test._id}/score-entry`
+                              : `/teacher/tests/${test._id}/score-entry`
+                          }
+                          className="bg-green-200 text-green-900 px-4 py-2 rounded-xl shadow hover:bg-green-300 font-semibold transition text-xs sm:text-base text-center"
+                        >
+                          Enter Score
+                        </Link>
+                      )}
+                      {user.role === 'teacher' && (
+                        <>
+                          <Link
+                            to={`/tests/${test._id}/edit`}
+                            className="bg-yellow-200 text-yellow-900 px-4 py-2 rounded-xl shadow hover:bg-yellow-300 font-semibold transition text-xs sm:text-base text-center"
+                          >
+                            Edit
+                          </Link>
+                          <button
+                            onClick={() => handleDelete(test._id)}
+                            className="bg-red-200 text-red-800 px-4 py-2 rounded-xl shadow hover:bg-red-300 font-semibold transition text-xs sm:text-base text-center"
+                          >
+                            Delete
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
       {/* Pagination Controls */}
       {totalPages > 1 && (

@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import TestForm from './TestForm';
 import { useNavigate } from 'react-router-dom';
+import api from '../config/api';
+
 
 function TestManagement() {
   const [tests, setTests] = useState([]);
@@ -19,7 +21,7 @@ function TestManagement() {
 
   const fetchTests = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/tests', {
+      const response = await api.get('/api/tests', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -34,7 +36,7 @@ function TestManagement() {
 
   const handleCreateTest = async (testData) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/tests', testData, {
+      const response = await api.post('/api/tests', testData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }

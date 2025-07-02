@@ -282,17 +282,54 @@ const Questions = () => {
         </List>
       </Paper>
 
-      <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="md" fullWidth>
-        <DialogTitle>
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="md" fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+            boxShadow: 8,
+            p: 2,
+          }
+        }}
+      >
+        <DialogTitle sx={{ fontWeight: 700, fontSize: '1.5rem', pb: 1 }}>
           {currentQuestion._id ? 'Edit Question' : 'Add New Question'}
         </DialogTitle>
-        <DialogContent>
+        <DialogContent sx={{ pt: 1 }}>
           <Box sx={{ mt: 2 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+              <Grid item xs={12}>
                 <TextField
                   fullWidth
                   label="Question Text"
+                  variant="outlined"
+                  InputLabelProps={{
+                    sx: {
+                      fontWeight: 600,
+                      color: '#6366f1',
+                      '&.Mui-focused': {
+                        color: '#2563eb',
+                        fontSize: '1rem',
+                        transform: 'translate(14px, -9px) scale(0.85)',
+                      },
+                    },
+                  }}
+                  sx={{
+                    mb: 2,
+                    backgroundColor: '#f9fafb',
+                    borderRadius: 2,
+                    '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                        borderColor: '#6366f1',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: '#2563eb',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#2563eb',
+                        boxShadow: '0 0 0 2px #6366f133',
+                      },
+                    },
+                  }}
                   multiline
                   rows={3}
                   value={currentQuestion.questionText}
@@ -304,8 +341,8 @@ const Questions = () => {
                   helperText={validationErrors.questionText}
                 />
               </Grid>
-              <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
-                <FormControl fullWidth error={!!validationErrors.type}>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth error={!!validationErrors.type} sx={{ mb: 2 }}>
                   <InputLabel>Question Type</InputLabel>
                   <Select
                     value={currentQuestion.type}
@@ -319,16 +356,44 @@ const Questions = () => {
                     className="skyblue-select"
                   >
                     <MenuItem value="MCQ">MCQ</MenuItem>
-                    <MenuItem value="Descriptive">Descriptive</MenuItem>
                     <MenuItem value="Fill in the Blank">Fill in the Blank</MenuItem>
                   </Select>
                   {validationErrors.type && <FormHelperText>{validationErrors.type}</FormHelperText>}
                 </FormControl>
               </Grid>
-              <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   label="Marks"
+                  variant="outlined"
+                  InputLabelProps={{
+                    sx: {
+                      fontWeight: 600,
+                      color: '#6366f1',
+                      '&.Mui-focused': {
+                        color: '#2563eb',
+                        fontSize: '1rem',
+                        transform: 'translate(14px, -9px) scale(0.85)',
+                      },
+                    },
+                  }}
+                  sx={{
+                    mb: 2,
+                    backgroundColor: '#f9fafb',
+                    borderRadius: 2,
+                    '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                        borderColor: '#6366f1',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: '#2563eb',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#2563eb',
+                        boxShadow: '0 0 0 2px #6366f133',
+                      },
+                    },
+                  }}
                   type="number"
                   value={currentQuestion.marks}
                   onChange={(e) => setCurrentQuestion({ ...currentQuestion, marks: parseInt(e.target.value) || 1 })}
@@ -338,16 +403,44 @@ const Questions = () => {
                 />
               </Grid>
               {currentQuestion.type === 'MCQ' && (
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                  <Typography variant="subtitle1" sx={{ mb: 1 }}>Options</Typography>
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>Options</Typography>
                   {currentQuestion.options.map((option, index) => (
                     <TextField
                       key={index}
                       fullWidth
                       label={`Option ${String.fromCharCode(65 + index)}`}
+                      variant="outlined"
+                      InputLabelProps={{
+                        sx: {
+                          fontWeight: 600,
+                          color: '#6366f1',
+                          '&.Mui-focused': {
+                            color: '#2563eb',
+                            fontSize: '1rem',
+                            transform: 'translate(14px, -9px) scale(0.85)',
+                          },
+                        },
+                      }}
+                      sx={{
+                        mb: 1,
+                        backgroundColor: '#f9fafb',
+                        borderRadius: 2,
+                        '& .MuiOutlinedInput-root': {
+                          '& fieldset': {
+                            borderColor: '#6366f1',
+                          },
+                          '&:hover fieldset': {
+                            borderColor: '#2563eb',
+                          },
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#2563eb',
+                            boxShadow: '0 0 0 2px #6366f133',
+                          },
+                        },
+                      }}
                       value={option}
                       onChange={(e) => handleOptionChange(index, e.target.value)}
-                      sx={{ mb: 1 }}
                       error={!!validationErrors.options}
                       helperText={validationErrors.options && `Option ${String.fromCharCode(65 + index)}: ${validationErrors.options}`}
                     />
@@ -372,27 +465,54 @@ const Questions = () => {
                 </Grid>
               )}
               {currentQuestion.type === 'Fill in the Blank' && (
-                <div>
-                  <label htmlFor="correctAnswer" className="block text-sm font-medium text-gray-700">Correct Answer</label>
-                  <input
-                    type="text"
-                    id="correctAnswer"
-                    name="correctAnswer"
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Correct Answer"
+                    variant="outlined"
+                    InputLabelProps={{
+                      sx: {
+                        fontWeight: 600,
+                        color: '#6366f1',
+                        '&.Mui-focused': {
+                          color: '#2563eb',
+                          fontSize: '1rem',
+                          transform: 'translate(14px, -9px) scale(0.85)',
+                        },
+                      },
+                    }}
+                    sx={{
+                      mt: 1,
+                      backgroundColor: '#f9fafb',
+                      borderRadius: 2,
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          borderColor: '#6366f1',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: '#2563eb',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#2563eb',
+                          boxShadow: '0 0 0 2px #6366f133',
+                        },
+                      },
+                    }}
                     value={currentQuestion.correctAnswer}
                     onChange={(e) => setCurrentQuestion({ ...currentQuestion, correctAnswer: e.target.value })}
-                    className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                    placeholder="Enter the correct answer"
+                    error={!!validationErrors.correctAnswer}
+                    helperText={validationErrors.correctAnswer}
                   />
-                </div>
+                </Grid>
               )}
             </Grid>
           </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenDialog(false)}>
+        <DialogActions sx={{ pb: 2, pr: 3 }}>
+          <Button onClick={() => setOpenDialog(false)} sx={{ color: '#374151', fontWeight: 600, borderRadius: 2, px: 3, py: 1 }}>
             Cancel
           </Button>
-          <Button onClick={handleSaveQuestion} variant="contained" color="primary">
+          <Button onClick={handleSaveQuestion} variant="contained" sx={{ background: 'linear-gradient(90deg, #6366f1 0%, #60a5fa 100%)', color: '#fff', fontWeight: 700, borderRadius: 2, px: 3, py: 1, boxShadow: 2, '&:hover': { background: 'linear-gradient(90deg, #4f46e5 0%, #2563eb 100%)' } }}>
             Save Question
           </Button>
         </DialogActions>

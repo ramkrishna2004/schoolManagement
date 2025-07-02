@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import TestForm from '../../components/TestForm';
+import api from '../../config/api';
+
 
 function NewTest() {
   const [classes, setClasses] = useState([]);
@@ -15,7 +16,7 @@ function NewTest() {
 
   const fetchClasses = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/classes', {
+      const response = await api.get('/api/classes', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -30,7 +31,7 @@ function NewTest() {
 
   const handleSubmit = async (testData) => {
     try {
-      await axios.post('http://localhost:5000/api/tests', testData, {
+      await api.post('/api/tests', testData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }

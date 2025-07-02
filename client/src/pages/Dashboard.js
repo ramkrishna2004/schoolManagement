@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Card, CardContent, CardActions, Button, Tooltip, Typography, Grid, Box, Avatar, Divider, useMediaQuery } from '@mui/material';
-import { People, School, Assessment, Add, Class as ClassIcon, MenuBook, Assignment, Notifications, Info, Dashboard as DashboardIcon, Announcement as AnnouncementIcon } from '@mui/icons-material';
+import { People, School, Assessment, Add, Class as ClassIcon, MenuBook, Assignment, Notifications, Info, Announcement as AnnouncementIcon } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 import AnnouncementList from '../components/AnnouncementList';
 import { announcementService } from '../services/announcementService';
 import { motion } from 'framer-motion';
-import axios from 'axios';
+import api from '../config/api';
 
 
 function GraphicalWorldLanding() {
@@ -135,13 +135,13 @@ function GraphicalWorldLanding() {
 }
 
 function Dashboard() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
   const isMobile = useMediaQuery('(max-width:600px)');
   const [announcements, setAnnouncements] = useState([]);
   const [teacherClasses, setTeacherClasses] = useState([]);
 
-  // Redirect superadmin to their dashboard
+  // All hooks must be at the top level
   useEffect(() => {
     if (user && user.role === 'superadmin') {
       navigate('/superadmin/dashboard');
@@ -162,14 +162,13 @@ function Dashboard() {
     if (user?.role === 'teacher') {
       const fetchClasses = async () => {
         try {
-          const token = localStorage.getItem('token');
-          if (token) {
-            const res = await axios.get('/api/classes', {
-              headers: { Authorization: `Bearer ${token}` },
+          const res = await api.get('/api/classes', {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
             });
             if (res.data.success) {
               setTeacherClasses(res.data.data);
-            }
           }
         } catch (error) {
           console.error('Failed to fetch teacher classes:', error);
@@ -178,6 +177,14 @@ function Dashboard() {
       fetchClasses();
     }
   }, [user]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
+      </div>
+    );
+  }
 
   if (!user) {
     return <GraphicalWorldLanding />;
@@ -193,7 +200,7 @@ function Dashboard() {
       { label: 'Manage Holidays', icon: <Assignment />, color: 'success', to: '/admin/holidays' },
     ],
     teacher: [
-      { label: 'Create Test', icon: <Add />, color: 'primary', to: '/teacher/tests' },
+      { label: 'Create Test', icon: <Add />, color: 'primary', to: '/tests' },
       { label: 'Upload Material', icon: <MenuBook />, color: 'secondary', to: '/materials' },
       { label: 'Take Attendance', icon: <Assignment />, color: 'success', to: '/teacher/attendance' },
       { label: 'Manage Diary', icon: <MenuBook />, color: 'info', to: '/teacher/diary' },
@@ -245,7 +252,7 @@ function Dashboard() {
       {
         title: 'Test Management',
         desc: 'Create and manage tests, view scores, and track student progress.',
-        icon: <Assessment fontSize="large" color="primary" />, href: '/teacher/tests',
+        icon: <Assessment fontSize="large" color="primary" />, href: '/tests',
         color: 'primary',
       },
       {
@@ -316,50 +323,113 @@ function Dashboard() {
 
   // User info card
   const userInfo = (
-    <Card className="mb-6" sx={{ mb: 4, background: 'linear-gradient(90deg, #bae6fd 0%, #7dd3fc 100%)', border: 0 }}>
-      <CardContent>
-        <Box display="flex" alignItems="center" gap={2}>
-          <Avatar sx={{ bgcolor: 'primary.main', width: 56, height: 56, boxShadow: 3 }}>
-            <DashboardIcon />
-          </Avatar>
-          <Box>
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, type: 'spring' }}
+      className="mb-8"
             >
-              <span className="inline-block mr-2 animate-wave text-2xl">👋</span>
+      <div
+        className="relative flex flex-col items-center justify-center w-full rounded-3xl shadow-2xl border border-sky-100 bg-white/70 backdrop-blur-xl px-4 sm:px-10 py-8 sm:py-12 overflow-hidden"
+        style={{ minHeight: 180, background: 'linear-gradient(135deg, rgba(236,254,255,0.85) 0%, rgba(221,227,255,0.85) 100%)' }}
+      >
+        {/* Animated blurred background shape */}
+        <motion.div
+          className="absolute -top-10 -left-10 w-40 sm:w-56 h-40 sm:h-56 rounded-full bg-gradient-to-br from-sky-300/30 via-indigo-200/30 to-blue-200/30 blur-2xl z-0"
+          animate={{ scale: [1, 1.08, 1], rotate: [0, 8, 0] }}
+          transition={{ repeat: Infinity, duration: 12, ease: 'easeInOut' }}
+        />
+        {/* Avatar */}
+        <div className="z-10 flex flex-col items-center">
+          <Avatar
+            src={user?.avatar && user.avatar.trim() !== '' ? user.avatar : undefined}
+            alt={user?.name}
+            sx={{
+              width: { xs: 64, sm: 110 },
+              height: { xs: 64, sm: 110 },
+              fontSize: { xs: 28, sm: 44 },
+              border: '4px solid #e0e7ef',
+              boxShadow: '0 8px 32px 0 rgba(56,189,248,0.12)',
+              bgcolor: !user?.avatar || user.avatar.trim() === '' ? 'primary.main' : 'transparent',
+              color: '#fff',
+              mb: 2,
+              transition: 'box-shadow 0.3s',
+            }}
+          >
+            {!user?.avatar || user.avatar.trim() === '' ? (
+              user?.name?.[0]?.toUpperCase() || (
+                <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="22" r="22" fill="#e0e7ef" /><text x="22" y="30" textAnchor="middle" fontSize="20" fill="#94a3b8" fontWeight="bold">?</text></svg>
+              )
+            ) : null}
+          </Avatar>
               <span
-                className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sky-700 to-blue-500 text-2xl sm:text-3xl md:text-4xl drop-shadow"
-                style={{ fontFamily: 'inherit', letterSpacing: '0.01em' }}
+            className="block font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sky-700 via-indigo-500 to-blue-400 text-2xl sm:text-3xl md:text-4xl drop-shadow-lg tracking-tight mb-1 mt-2"
+            style={{ fontFamily: 'inherit', letterSpacing: '0.01em', lineHeight: 1.1 }}
               >
                 Welcome, {user?.name}
               </span>
+          <span className="block text-base sm:text-lg text-blue-900 font-medium mb-1">We&apos;re glad to have you back in <span className="font-bold text-sky-600">SchoolMS</span>.</span>
+          <span className="block text-sm sm:text-base text-gray-600 mb-2">{user?.email} &nbsp;|&nbsp; <span className="capitalize">{user?.role}</span></span>
+          <motion.button
+            whileHover={{ scale: 1.07, background: 'linear-gradient(90deg, #38bdf8 0%, #6366f1 100%)', boxShadow: '0 4px 24px #bae6fd' }}
+            className="mt-4 px-5 sm:px-7 py-2.5 sm:py-3 rounded-full bg-gradient-to-r from-indigo-500 to-sky-400 text-white font-semibold shadow-lg text-base sm:text-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+            onClick={() => window.scrollTo({ top: 400, behavior: 'smooth' })}
+          >
+            Explore Dashboard
+          </motion.button>
+        </div>
+      </div>
             </motion.div>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-              {user?.email}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Role: {user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}
-            </Typography>
-          </Box>
-        </Box>
-      </CardContent>
-    </Card>
   );
 
-  // Notification/alert area (replaces placeholder)
+  // Responsive notifications area
   const notifications = (
-    <Card className="mb-6" sx={{ mb: 4 }}>
-      <CardContent>
-        <Box display="flex" alignItems="center" gap={2}>
-          <Notifications color="warning" />
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, type: 'spring' }}
+      className="mb-10"
+    >
+      <Box
+        sx={{
+          position: 'relative',
+          borderRadius: 6,
+          overflow: 'visible',
+          boxShadow: '0 12px 40px 0 rgba(56,189,248,0.13)',
+          p: { xs: 1, sm: 3 },
+          background: 'rgba(255,255,255,0.7)',
+          backdropFilter: 'blur(10px)',
+          display: 'flex',
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'stretch', sm: 'center' },
+          gap: { xs: 1, sm: 3 },
+        }}
+      >
+        <Box
+          sx={{
+            minWidth: { xs: 40, sm: 54 },
+            minHeight: { xs: 40, sm: 54 },
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #f0f5ff 0%, #e0e7ef 100%)',
+            boxShadow: '0 2px 8px 0 rgba(99,102,241,0.13)',
+            mr: { xs: 0, sm: 2 },
+            mb: { xs: 1, sm: 0 },
+            alignSelf: { xs: 'center', sm: 'flex-start' },
+          }}
+        >
+          <Notifications sx={{ color: '#6366f1', fontSize: { xs: 28, sm: 36 } }} />
+        </Box>
           <Box flex={1}>
+          <Typography variant="h6" fontWeight={800} sx={{ mb: 0.5, letterSpacing: 0.2, fontSize: { xs: '1rem', sm: '1.25rem' }, textShadow: '0 2px 8px #6366f155', color: '#1e293b' }}>
+            Announcements
+          </Typography>
             <AnnouncementList announcements={announcements} />
           </Box>
         </Box>
-      </CardContent>
-    </Card>
+    </motion.div>
   );
 
   // Redesigned Quick Actions block
@@ -367,17 +437,27 @@ function Dashboard() {
     <Box
       sx={{
         mb: 4,
-        p: { xs: 1.5, sm: 3 },
+        p: 0,
+        borderRadius: 5,
+        boxShadow: 3,
+        border: 'none',
+        position: 'relative',
+        overflow: 'hidden',
         background: 'linear-gradient(90deg, #f0f9ff 0%, #e0e7ff 100%)',
-        borderRadius: 4,
-        boxShadow: 2,
-        border: '1px solid #e0e7ef',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'stretch',
       }}
     >
-      <Typography variant="h6" fontWeight={700} mb={2} color="primary.main" sx={{ letterSpacing: 0.5 }}>
+      {/* Glassmorphism overlay for content */}
+      <Box
+        sx={{
+          position: 'relative',
+          zIndex: 1,
+          p: { xs: 1.5, sm: 5 },
+          borderRadius: 5,
+          background: 'rgba(255,255,255,0.65)',
+          backdropFilter: 'blur(10px)',
+      }}
+    >
+        <Typography variant="h6" fontWeight={800} mb={2} color="primary.main" sx={{ letterSpacing: 0.5, fontSize: { xs: '1.1rem', sm: '1.25rem' } }}>
         Quick Actions
       </Typography>
       <Box
@@ -392,37 +472,32 @@ function Dashboard() {
       >
         {quickActions[user?.role]?.map((action, idx) => (
           <Tooltip title={action.label} arrow key={idx}>
-            <Button
-              component={Link}
-              to={action.to}
-              state={action.state}
-              variant="contained"
-              color={action.color}
-              startIcon={action.icon}
-              size={isMobile ? 'medium' : 'large'}
-              sx={{
-                borderRadius: 3,
-                fontWeight: 700,
-                px: isMobile ? 2 : 3,
-                py: isMobile ? 1 : 1.5,
-                boxShadow: 1,
-                textTransform: 'none',
-                fontSize: isMobile ? '0.95rem' : '1rem',
-                minWidth: isMobile ? 120 : 170,
-                transition: 'all 0.18s',
+              <motion.button
+                type="button"
+                className="font-bold rounded-full px-4 sm:px-6 py-2.5 sm:py-3 text-base sm:text-lg shadow-md focus:outline-none focus:ring-2 focus:ring-sky-300 transition-all duration-200"
+                style={{
+                  background: 'linear-gradient(90deg, #38bdf8 0%, #6366f1 100%)',
+                  color: '#fff',
+                  minWidth: isMobile ? 100 : 150,
                 width: isMobile ? '100%' : 'auto',
-                '&:hover': {
-                  boxShadow: 3,
-                  transform: 'translateY(-2px) scale(1.04)',
-                },
-              }}
+                  border: 'none',
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 12px 0 rgba(56,189,248,0.10)',
+                }}
+                whileHover={{ scale: 1.04, rotate: -2 }}
+                whileTap={{ scale: 0.98, rotate: 0 }}
+                transition={{ type: 'spring', stiffness: 120, damping: 14 }}
+                onClick={() => { window.location.href = action.to; }}
               aria-label={action.label}
-              fullWidth={isMobile}
             >
+                <span className="inline-flex items-center gap-2 text-base sm:text-lg">
+                  {action.icon}
               {action.label}
-            </Button>
+                </span>
+              </motion.button>
           </Tooltip>
         ))}
+        </Box>
       </Box>
     </Box>
   );
@@ -433,17 +508,30 @@ function Dashboard() {
       sx={{
         mt: 0,
         mb: 4,
-        p: { xs: 1.5, sm: 3 },
+        p: 0,
+        borderRadius: 5,
+        boxShadow: 2,
+        border: 'none',
+        position: 'relative',
+        overflow: 'hidden',
         background: 'linear-gradient(90deg, #f8fafc 0%, #e0e7ef 100%)',
-        borderRadius: 4,
-        boxShadow: 1,
-        border: '1px solid #e0e7ef',
       }}
     >
-      <Typography variant="h6" fontWeight={700} mb={2} color="secondary.main" sx={{ letterSpacing: 0.5 }}>
+      {/* Glassmorphism overlay for content */}
+      <Box
+        sx={{
+          position: 'relative',
+          zIndex: 1,
+          p: { xs: 1.5, sm: 5 },
+          borderRadius: 5,
+          background: 'rgba(255,255,255,0.65)',
+          backdropFilter: 'blur(10px)',
+      }}
+    >
+        <Typography variant="h6" fontWeight={800} mb={2} color="secondary.main" sx={{ letterSpacing: 0.5, fontSize: { xs: '1.1rem', sm: '1.25rem' } }}>
         Management Access
       </Typography>
-      <Grid container spacing={3}>
+        <Grid container spacing={2}>
         {roleCards[user?.role]?.map((card, idx) => (
           <Grid item xs={12} sm={isMobile ? 12 : 6} md={4} key={idx}>
             <Card
@@ -457,47 +545,61 @@ function Dashboard() {
                   boxShadow: 6,
                   transform: 'translateY(-4px) scale(1.03)',
                 },
+                  p: { xs: 1, sm: 2 },
               }}
               tabIndex={0}
               aria-label={card.title}
             >
-              <CardContent>
-                <Box display="flex" alignItems="center" gap={2} mb={2}>
-                  {card.icon}
-                  <Typography variant="h6" fontWeight={700} color={`${card.color}.main`}>
+                <CardContent sx={{ p: { xs: 1, sm: 2 } }}>
+                  <Box display="flex" alignItems="center" gap={1} mb={1}>
+                    {React.cloneElement(card.icon, { fontSize: isMobile ? 'medium' : 'large' })}
+                    <Typography variant="h6" fontWeight={700} color={`${card.color}.main`} sx={{ fontSize: { xs: '1rem', sm: '1.15rem' } }}>
                     {card.title}
                   </Typography>
                 </Box>
-                <Typography variant="body2" color="text.secondary" mb={2}>
+                  <Typography variant="body2" color="text.secondary" mb={2} sx={{ fontSize: { xs: '0.95rem', sm: '1rem' } }}>
                   {card.desc}
                 </Typography>
               </CardContent>
-              <CardActions>
+                <CardActions sx={{ p: { xs: 1, sm: 2 } }}>
+                  <motion.a
+                    href={card.href}
+                    style={{ textDecoration: 'none', width: '100%' }}
+                    whileHover={{ scale: 1.07, rotate: 4, boxShadow: '0 6px 24px #bae6fd' }}
+                    whileTap={{ scale: 0.96, rotate: 0 }}
+                    transition={{ type: 'spring', stiffness: 120, damping: 14 }}
+                  >
                 <Button
                   variant="outlined"
                   color={card.color}
-                  href={card.href}
                   fullWidth
                   sx={{
                     borderRadius: 3,
                     fontWeight: 600,
                     textTransform: 'none',
                     transition: 'all 0.2s',
-                    fontSize: isMobile ? '0.95rem' : '1rem',
+                        fontSize: { xs: '0.95rem', sm: '1rem' },
+                        background: 'linear-gradient(90deg, #e0e7ff 0%, #f0f9ff 100%)',
+                        border: '2px solid #38bdf8',
+                        color: '#2563eb',
                     '&:hover': {
                       boxShadow: 2,
-                      backgroundColor: `${card.color}.light`,
+                          background: 'linear-gradient(90deg, #bae6fd 0%, #e0e7ff 100%)',
+                          color: '#0ea5e9',
                     },
+                        py: { xs: 1, sm: 1.5 },
                   }}
                   aria-label={`Go to ${card.title}`}
                 >
                   Go to {card.title}
                 </Button>
+                  </motion.a>
               </CardActions>
             </Card>
           </Grid>
         ))}
       </Grid>
+      </Box>
     </Box>
   );
 

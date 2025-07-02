@@ -20,6 +20,13 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Please add a password'],
     minlength: [6, 'Password must be at least 6 characters']
   },
+  rollno: {
+    type: String,
+    unique: true,
+    sparse: true, // Allows unique only for non-null values
+    required: function() { return this.role === 'student'; },
+    trim: true
+  },
   avatar: {
     type: String,
     default: ''

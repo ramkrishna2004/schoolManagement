@@ -1,4 +1,5 @@
-import axios from 'axios';
+import api from '../config/api';
+
 
 export const materialService = {
   // Get all materials with filters
@@ -11,7 +12,7 @@ export const materialService = {
     });
     
     const token = localStorage.getItem('token');
-    const response = await axios.get(`http://localhost:5000/api/materials?${queryParams}`, {
+    const response = await api.get('/api/materials', {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -22,7 +23,7 @@ export const materialService = {
   // Get single material
   getMaterial: async (id) => {
     const token = localStorage.getItem('token');
-    const response = await axios.get(`http://localhost:5000/api/materials/${id}`, {
+    const response = await api.get(`/api/materials/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -33,9 +34,8 @@ export const materialService = {
   // Create new material
   createMaterial: async (formData) => {
     const token = localStorage.getItem('token');
-    const response = await axios.post('http://localhost:5000/api/materials', formData, {
+    const response = await api.post('/api/materials', formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`
       },
     });
@@ -45,7 +45,7 @@ export const materialService = {
   // Update material
   updateMaterial: async (id, data) => {
     const token = localStorage.getItem('token');
-    const response = await axios.put(`http://localhost:5000/api/materials/${id}`, data, {
+    const response = await api.put(`/api/materials/${id}`, data, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -56,7 +56,7 @@ export const materialService = {
   // Delete material
   deleteMaterial: async (id) => {
     const token = localStorage.getItem('token');
-    const response = await axios.delete(`http://localhost:5000/api/materials/${id}`, {
+    const response = await api.delete(`/api/materials/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -67,11 +67,11 @@ export const materialService = {
   // Download material
   downloadMaterial: async (id) => {
     const token = localStorage.getItem('token');
-    const response = await axios.get(`http://localhost:5000/api/materials/${id}/download`, {
-      responseType: 'blob',
+    const response = await api.get(`/api/materials/${id}/download`, {
       headers: {
         Authorization: `Bearer ${token}`
-      }
+      },
+      responseType: 'blob'
     });
     return response;
   },
@@ -79,7 +79,7 @@ export const materialService = {
   // Get material analytics
   getMaterialAnalytics: async (id) => {
     const token = localStorage.getItem('token');
-    const response = await axios.get(`http://localhost:5000/api/materials/${id}/analytics`, {
+    const response = await api.get(`/api/materials/${id}/analytics`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -90,11 +90,19 @@ export const materialService = {
   // Get available classes for material upload
   getAvailableClasses: async () => {
     const token = localStorage.getItem('token');
-    const response = await axios.get('http://localhost:5000/api/classes', {
+    const response = await api.get('/api/classes', {
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
     return response.data;
+  },
+
+  // Log material access (view/download)
+  logMaterialAccess: async (id, accessType) => {
+    const token = localStorage.getItem('token');
+    await api.post(`/api/materials/${id}/access`, { accessType }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
   }
 }; 

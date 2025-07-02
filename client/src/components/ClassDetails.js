@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import api from '../config/api';
+
 
 function ClassDetails() {
   const [classData, setClassData] = useState(null);
@@ -19,7 +20,7 @@ function ClassDetails() {
 
   const fetchClassDetails = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/classes/${id}`, {
+      const response = await api.get(`/api/classes/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -34,7 +35,7 @@ function ClassDetails() {
 
   const fetchAvailableStudents = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/students', {
+      const response = await api.get('/api/students', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -47,8 +48,8 @@ function ClassDetails() {
 
   const handleAddStudent = async (studentId) => {
     try {
-      await axios.post(
-        `http://localhost:5000/api/classes/${id}/students`,
+      await api.post(
+        `/api/classes/${id}/students`,
         { studentId },
         {
           headers: {
@@ -64,8 +65,8 @@ function ClassDetails() {
 
   const handleRemoveStudent = async (studentId) => {
     try {
-      await axios.delete(
-        `http://localhost:5000/api/classes/${id}/students/${studentId}`,
+      await api.delete(
+        `/api/classes/${id}/students/${studentId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`

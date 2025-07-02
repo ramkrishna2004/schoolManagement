@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../config/api';
 import { EventAvailable, Add, Edit, Delete, Save, Cancel } from '@mui/icons-material';
 
 function AdminHolidays() {
@@ -18,7 +18,7 @@ function AdminHolidays() {
 
   const fetchHolidays = async () => {
     try {
-      const response = await axios.get('/api/holidays');
+      const response = await api.get('/api/holidays');
       setHolidays(response.data.data);
     } catch (err) {
       setError('Failed to fetch holidays');
@@ -28,7 +28,7 @@ function AdminHolidays() {
   const addHoliday = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/holidays', { date, reason });
+      const response = await api.post('/api/holidays', { date, reason });
       setHolidays([...holidays, response.data.data]);
       setDate('');
       setReason('');
@@ -54,7 +54,7 @@ function AdminHolidays() {
 
   const updateHoliday = async (id) => {
     try {
-      const response = await axios.put(`/api/holidays/${id}`, {
+      const response = await api.put(`/api/holidays/${id}`, {
         date: editDate,
         reason: editReason
       });
@@ -73,7 +73,7 @@ function AdminHolidays() {
   const deleteHoliday = async (id) => {
     if (window.confirm('Are you sure you want to delete this holiday?')) {
       try {
-        await axios.delete(`/api/holidays/${id}`);
+        await api.delete(`/api/holidays/${id}`);
         setHolidays(holidays.filter(h => h._id !== id));
         setSuccess('Holiday deleted successfully!');
         setTimeout(() => setSuccess(''), 3000);

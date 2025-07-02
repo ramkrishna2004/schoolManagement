@@ -85,13 +85,26 @@ exports.registerStudent = async (req, res) => {
       });
     }
     console.log('PASSED ADMIN CHECK');
-    const { name, email, password, age, extraDetails } = req.body;
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
+    const { name, email, password, age, extraDetails, rollno } = req.body;
+    if (!rollno) {
       return res.status(400).json({
         success: false,
-        error: 'Email already exists'
+        error: 'Roll number is required'
       });
+    }
+    const existingUser = await User.findOne({ $or: [{ email }, { rollno }] });
+    if (existingUser) {
+      if (existingUser.email === email) {
+        return res.status(400).json({
+          success: false,
+          error: 'Email already exists'
+        });
+      } else {
+        return res.status(400).json({
+          success: false,
+          error: 'Roll number already exists'
+        });
+      }
     }
     const student = await Student.create({
       name,
@@ -105,7 +118,8 @@ exports.registerStudent = async (req, res) => {
       email,
       password,
       role: 'student',
-      roleId: student._id
+      roleId: student._id,
+      rollno
     });
     const token = generateToken(user._id, 'student');
     res.status(201).json({
@@ -186,17 +200,24 @@ exports.registerAdmin = async (req, res) => {
 // Login
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body;
-
-    // Find user
-    const user = await User.findOne({ email });
+    const { email, rollno, password } = req.body;
+    let user;
+    if (email) {
+      user = await User.findOne({ email });
+    } else if (rollno) {
+      user = await User.findOne({ rollno });
+    } else {
+      return res.status(400).json({
+        success: false,
+        error: 'Email or Roll number is required'
+      });
+    }
     if (!user) {
       return res.status(401).json({
         success: false,
         error: 'Invalid credentials'
       });
     }
-
     // Check password
     const isMatch = await user.matchPassword(password);
     if (!isMatch) {

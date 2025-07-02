@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import AnimatedInput from './AnimatedInput';
+import api from '../config/api';
+
 
 function TestForm({ onSubmit, onCancel, initialData }) {
   const [formData, setFormData] = useState({
@@ -38,7 +40,7 @@ function TestForm({ onSubmit, onCancel, initialData }) {
 
   const fetchClasses = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/classes', {
+      const response = await api.get('/api/classes', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -106,28 +108,21 @@ function TestForm({ onSubmit, onCancel, initialData }) {
               {error}
             </div>
           )}
-
           <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
             <div className="sm:col-span-3">
-              <label htmlFor="testTitle" className="block text-sm font-medium text-gray-700">
-                Title
-              </label>
-              <input
+              <AnimatedInput
                 type="text"
                 name="testTitle"
                 id="testTitle"
+                label="Title"
                 value={formData.testTitle}
                 onChange={handleChange}
                 required
-                className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                 placeholder="Enter test title"
               />
             </div>
-
             <div className="sm:col-span-3">
-              <label htmlFor="type" className="block text-sm font-medium text-gray-700">
-                Type
-              </label>
+              <label htmlFor="type" className="block text-sm font-medium text-gray-700">Type</label>
               <select
                 id="type"
                 name="type"
@@ -142,27 +137,20 @@ function TestForm({ onSubmit, onCancel, initialData }) {
                 <option value="Quiz" className="skyblue-option">Quiz</option>
               </select>
             </div>
-
             <div className="sm:col-span-3">
-              <label htmlFor="subjectName" className="block text-sm font-medium text-gray-700">
-                Subject
-              </label>
-              <input
+              <AnimatedInput
                 type="text"
                 name="subjectName"
                 id="subjectName"
+                label="Subject"
                 value={formData.subjectName}
                 onChange={handleChange}
                 required
-                className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                 placeholder="Enter subject name"
               />
             </div>
-
             <div className="sm:col-span-3">
-              <label htmlFor="classId" className="block text-sm font-medium text-gray-700">
-                Class
-              </label>
+              <label htmlFor="classId" className="block text-sm font-medium text-gray-700">Class</label>
               <select
                 id="classId"
                 name="classId"
@@ -179,112 +167,87 @@ function TestForm({ onSubmit, onCancel, initialData }) {
                 ))}
               </select>
             </div>
-
             <div className="sm:col-span-2">
-              <label htmlFor="totalMarks" className="block text-sm font-medium text-gray-700">
-                Total Marks
-              </label>
-              <input
+              <AnimatedInput
                 type="number"
                 name="totalMarks"
                 id="totalMarks"
+                label="Total Marks"
                 value={formData.totalMarks}
                 onChange={handleChange}
                 required
                 min="0"
-                className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
               />
             </div>
-
             <div className="sm:col-span-2">
-              <label htmlFor="passingMarks" className="block text-sm font-medium text-gray-700">
-                Passing Marks
-              </label>
-              <input
+              <AnimatedInput
                 type="number"
                 name="passingMarks"
                 id="passingMarks"
+                label="Passing Marks"
                 value={formData.passingMarks}
                 onChange={handleChange}
                 required
                 min="0"
-                className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
               />
             </div>
-
             <div className="sm:col-span-2">
-              <label htmlFor="duration" className="block text-sm font-medium text-gray-700">
-                Duration (minutes)
-              </label>
-              <input
+              <AnimatedInput
                 type="number"
                 name="duration"
                 id="duration"
+                label="Duration (minutes)"
                 value={formData.duration}
                 onChange={handleChange}
                 required
                 min="0"
-                className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
               />
             </div>
-
             <div className="sm:col-span-3">
-              <label htmlFor="scheduledDate" className="block text-sm font-medium text-gray-700">
-                Scheduled Date
-              </label>
-              <input
+              <AnimatedInput
                 type="date"
                 name="scheduledDate"
                 id="scheduledDate"
+                label="Scheduled Date"
                 value={formData.scheduledDate}
                 onChange={handleChange}
                 required
-                className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
               />
             </div>
-
             <div className="sm:col-span-3">
-              <label htmlFor="startTime" className="block text-sm font-medium text-gray-700">
-                Start Time
-              </label>
-              <input
+              <AnimatedInput
                 type="time"
                 name="startTime"
                 id="startTime"
+                label="Start Time"
                 value={formData.startTime}
                 onChange={handleChange}
                 required
-                className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
               />
             </div>
-
             <div className="sm:col-span-3">
-              <label htmlFor="endTime" className="block text-sm font-medium text-gray-700">
-                End Time
-              </label>
-              <input
+              <AnimatedInput
                 type="time"
                 name="endTime"
                 id="endTime"
+                label="End Time"
                 value={formData.endTime}
                 onChange={handleChange}
                 required
-                className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
               />
             </div>
           </div>
-
-          <div className="flex justify-end space-x-3">
+          <div className="flex justify-end space-x-2 pt-2">
             <button
               type="button"
               onClick={onCancel}
-              className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="px-5 py-2 text-sm font-semibold text-indigo-700 bg-white border border-indigo-200 rounded-lg shadow hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-400"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="px-5 py-2 text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-blue-400 rounded-lg shadow hover:from-indigo-600 hover:to-blue-500 focus:outline-none focus:ring-2 focus:ring-indigo-400"
             >
               {initialData ? 'Update Test' : 'Create Test'}
             </button>

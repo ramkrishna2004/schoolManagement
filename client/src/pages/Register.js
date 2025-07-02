@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import AnimatedInput from '../components/AnimatedInput';
 
 function Register() {
   const { user, loading } = useAuth();
@@ -11,6 +12,7 @@ function Register() {
     confirmPassword: '',
     role: 'student',
     age: '',
+    rollno: '',
     extraDetails: {
       parentContact: '',
       address: '',
@@ -74,6 +76,10 @@ function Register() {
         setError('Student must be at least 5 years old');
         return;
       }
+      if (!formData.rollno) {
+        setError('Roll number is required');
+        return;
+      }
       if (!formData.extraDetails.parentContact) {
         setError('Please add parent contact');
         return;
@@ -106,7 +112,8 @@ function Register() {
         formData.password,
         formData.role,
         formData.age,
-        formData.extraDetails
+        formData.extraDetails,
+        formData.rollno
       );
       const from = location.state?.from || '/';
       navigate(from);
@@ -143,224 +150,132 @@ function Register() {
             </div>
           )}
           <form className="space-y-6" onSubmit={handleSubmit}>
+            <AnimatedInput
+              id="name"
+              name="name"
+              label="Full Name"
+              type="text"
+              required
+              value={formData.name}
+              onChange={handleChange}
+            />
+            <AnimatedInput
+              id="email"
+              name="email"
+              label="Email address"
+              type="email"
+              autoComplete="email"
+              required
+              value={formData.email}
+              onChange={handleChange}
+            />
+            <AnimatedInput
+              id="password"
+              name="password"
+              label="Password"
+              type="password"
+              required
+              value={formData.password}
+              onChange={handleChange}
+            />
+            <AnimatedInput
+              id="confirmPassword"
+              name="confirmPassword"
+              label="Confirm Password"
+              type="password"
+              required
+              value={formData.confirmPassword}
+              onChange={handleChange}
+            />
             <div>
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-gray-700"
+              <label htmlFor="role" className="block text-sm font-medium text-gray-700">Role</label>
+              <select
+                id="role"
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm skyblue-select"
               >
-                Full Name
-              </label>
-              <div className="mt-1">
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  required
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                />
-              </div>
+                <option value="student" className="skyblue-option">Student</option>
+                <option value="teacher" className="skyblue-option">Teacher</option>
+              </select>
             </div>
-
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Email address
-              </label>
-              <div className="mt-1">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Password
-              </label>
-              <div className="mt-1">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="confirmPassword"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Confirm Password
-              </label>
-              <div className="mt-1">
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  required
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="role"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Role
-              </label>
-              <div className="mt-1">
-                <select
-                  id="role"
-                  name="role"
-                  value={formData.role}
-                  onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm skyblue-select"
-                >
-                  <option value="student" className="skyblue-option">Student</option>
-                  <option value="teacher" className="skyblue-option">Teacher</option>
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="age"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Age
-              </label>
-              <div className="mt-1">
-                <input
-                  id="age"
-                  name="age"
-                  type="number"
-                  min={formData.role === 'teacher' ? 18 : 5}
-                  required
-                  value={formData.age}
-                  onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                />
-              </div>
-            </div>
-
+            <AnimatedInput
+              id="age"
+              name="age"
+              label="Age"
+              type="number"
+              required
+              value={formData.age}
+              onChange={handleChange}
+            />
             {formData.role === 'student' && (
               <>
-                <div>
-                  <label
-                    htmlFor="parentContact"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Parent Contact
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      id="parentContact"
-                      name="extraDetails.parentContact"
-                      type="tel"
-                      required
-                      value={formData.extraDetails.parentContact}
-                      onChange={handleChange}
-                      className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="address"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Address
-                  </label>
-                  <div className="mt-1">
-                    <textarea
-                      id="address"
-                      name="extraDetails.address"
-                      required
-                      value={formData.extraDetails.address}
-                      onChange={handleChange}
-                      rows="3"
-                      className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    />
-                  </div>
-                </div>
+                <AnimatedInput
+                  id="rollno"
+                  name="rollno"
+                  label="Roll Number"
+                  type="text"
+                  required
+                  value={formData.rollno}
+                  onChange={handleChange}
+                />
+                <AnimatedInput
+                  id="parentContact"
+                  name="extraDetails.parentContact"
+                  label="Parent Contact"
+                  type="text"
+                  required
+                  value={formData.extraDetails.parentContact}
+                  onChange={handleChange}
+                />
+                <AnimatedInput
+                  id="address"
+                  name="extraDetails.address"
+                  label="Address"
+                  type="text"
+                  required
+                  value={formData.extraDetails.address}
+                  onChange={handleChange}
+                />
               </>
             )}
-
             {formData.role === 'teacher' && (
               <>
-                <div>
-                  <label
-                    htmlFor="contact"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Contact Number
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      id="contact"
-                      name="extraDetails.contact"
-                      type="tel"
-                      required
-                      value={formData.extraDetails.contact}
-                      onChange={handleChange}
-                      className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="qualifications"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Qualifications
-                  </label>
-                  <div className="mt-1">
-                    <textarea
-                      id="qualifications"
-                      name="extraDetails.qualifications"
-                      required
-                      value={formData.extraDetails.qualifications}
-                      onChange={handleChange}
-                      rows="3"
-                      className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    />
-                  </div>
-                </div>
+                <AnimatedInput
+                  id="contact"
+                  name="extraDetails.contact"
+                  label="Contact"
+                  type="text"
+                  required
+                  value={formData.extraDetails.contact}
+                  onChange={handleChange}
+                />
+                <AnimatedInput
+                  id="qualifications"
+                  name="extraDetails.qualifications"
+                  label="Qualifications"
+                  type="text"
+                  required
+                  value={formData.extraDetails.qualifications}
+                  onChange={handleChange}
+                />
               </>
             )}
-
-            <div>
+            <div className="flex justify-end space-x-2 pt-2">
+              <button
+                type="button"
+                onClick={() => navigate(-1)}
+                className="px-5 py-2 text-sm font-semibold text-indigo-700 bg-white border border-indigo-200 rounded-lg shadow hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              >
+                Cancel
+              </button>
               <button
                 type="submit"
                 disabled={formLoading}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                className="px-5 py-2 text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-blue-400 rounded-lg shadow hover:from-indigo-600 hover:to-blue-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 disabled:opacity-50"
               >
-                {formLoading ? 'Creating account...' : 'Create account'}
+                Register
               </button>
             </div>
           </form>

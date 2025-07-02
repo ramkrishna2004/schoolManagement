@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { createDiary, getDiaries, updateDiary, deleteDiary } from '../services/diaryService';
 import DiaryForm from '../components/DiaryForm';
 import DiaryList from '../components/DiaryList';
-import axios from 'axios';
+import api from '../config/api';
 
 const AdminDiaryPage = () => {
   const { user, token } = useAuth();
@@ -20,7 +20,7 @@ const AdminDiaryPage = () => {
   useEffect(() => {
     // Fetch all classes
     const fetchClasses = async () => {
-      const res = await axios.get('/api/classes', {
+      const res = await api.get('/api/classes', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setClasses(res.data.data || []);

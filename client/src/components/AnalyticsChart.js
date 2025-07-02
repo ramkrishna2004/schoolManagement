@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
 
-const AnalyticsChart = ({ type, data, options }) => {
+const AnalyticsChart = ({ type, data, options, onElementClick }) => {
     const chartRef = useRef(null);
     const chartInstance = useRef(null);
 
@@ -17,12 +17,31 @@ const AnalyticsChart = ({ type, data, options }) => {
             options,
         });
 
+        // Add click handler for pie chart
+        if (type === 'pie' && onElementClick) {
+            const canvas = chartRef.current;
+            const handler = (event) => {
+                const points = chartInstance.current.getElementsAtEventForMode(event, 'nearest', { intersect: true }, true);
+                if (points.length > 0) {
+                    const idx = points[0].index;
+                    onElementClick(idx);
+                }
+            };
+            canvas.addEventListener('click', handler);
+            return () => {
+                canvas.removeEventListener('click', handler);
+                if (chartInstance.current) {
+                    chartInstance.current.destroy();
+                }
+            };
+        }
+
         return () => {
             if (chartInstance.current) {
                 chartInstance.current.destroy();
             }
         };
-    }, [type, data, options]);
+    }, [type, data, options, onElementClick]);
 
     return <canvas ref={chartRef}></canvas>;
 };

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
+import AnimatedInput from './AnimatedInput';
+import api from '../config/api';
+
 
 function ClassForm() {
   const [formData, setFormData] = useState({
@@ -23,7 +25,7 @@ function ClassForm() {
 
   const fetchTeachers = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/teachers', {
+      const response = await api.get('/api/teachers', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -36,7 +38,7 @@ function ClassForm() {
 
   const fetchClass = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/classes/${id}`, {
+      const response = await api.get(`/api/classes/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -58,13 +60,13 @@ function ClassForm() {
 
     try {
       if (id) {
-        await axios.put(`http://localhost:5000/api/classes/${id}`, formData, {
+        await api.put(`/api/classes/${id}`, formData, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         });
       } else {
-        await axios.post('http://localhost:5000/api/classes', formData, {
+        await api.post('/api/classes', formData, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
@@ -86,84 +88,64 @@ function ClassForm() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6">
-        {id ? 'Edit Class' : 'Create New Class'}
-      </h2>
-
+    <form onSubmit={handleSubmit} className="space-y-6 max-w-md mx-auto bg-white p-8 rounded-xl shadow-xl border border-gray-100">
+      <h2 className="text-2xl font-bold text-indigo-700 mb-4 text-center">{id ? 'Edit Class' : 'Create New Class'}</h2>
       {error && (
         <div className="bg-red-50 text-red-500 p-4 rounded-md mb-6">
           {error}
         </div>
       )}
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Class Name
-          </label>
-          <input
-            type="text"
-            name="className"
+      <AnimatedInput
+        id="className"
+        label="Class Name"
             value={formData.className}
             onChange={handleChange}
-            required
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+        name="className"
+        autoComplete="off"
           />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Subject Name
-          </label>
-          <input
-            type="text"
-            name="subjectName"
+      <AnimatedInput
+        id="subjectName"
+        label="Subject Name"
             value={formData.subjectName}
             onChange={handleChange}
-            required
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+        name="subjectName"
+        autoComplete="off"
           />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Teacher
-          </label>
+      <div className="relative group my-6">
           <select
+          id="teacherId"
             name="teacherId"
             value={formData.teacherId}
             onChange={handleChange}
             required
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 skyblue-select"
+          className="w-full px-3 py-2 pt-5 bg-white border-2 border-gray-200 rounded-lg shadow-md focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-300 transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] text-gray-800 text-sm appearance-none"
           >
-            <option value="" className="skyblue-option">Select a teacher</option>
+          <option value="">Select a teacher</option>
             {teachers.map((teacher) => (
-              <option key={teacher._id} value={teacher._id} className="skyblue-option">
+            <option key={teacher._id} value={teacher._id}>
                 {teacher.name}
               </option>
             ))}
           </select>
+        <label htmlFor="teacherId" className="absolute left-3 top-3.5 text-gray-500 text-base pointer-events-none transition-all duration-200 transform origin-left peer-focus:-top-2 peer-focus:text-xs peer-focus:text-indigo-600 peer-focus:bg-white peer-focus:px-1 peer-focus:shadow-lg">Teacher</label>
         </div>
-
-        <div className="flex justify-end space-x-4">
+      <div className="flex justify-end space-x-2 pt-2">
           <button
             type="button"
             onClick={() => navigate('/classes')}
-            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+          className="px-5 py-2 text-sm font-semibold text-indigo-700 bg-white border border-indigo-200 rounded-lg shadow hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-400"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+          className="px-5 py-2 text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-blue-400 rounded-lg shadow hover:from-indigo-600 hover:to-blue-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 disabled:opacity-50"
           >
             {loading ? 'Saving...' : id ? 'Update Class' : 'Create Class'}
           </button>
         </div>
       </form>
-    </div>
   );
 }
 

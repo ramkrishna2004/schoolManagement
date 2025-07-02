@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Card, CardContent, Button, Typography, Box, Avatar, Divider, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Alert } from '@mui/material';
 import { Edit, Lock, Email, AssignmentInd, Save } from '@mui/icons-material';
-import axios from 'axios';
+
+import api from '../config/api';
+
 
 function Profile() {
   const { user, updateUser } = useAuth();
@@ -53,7 +55,7 @@ function Profile() {
     setSuccess('');
 
     try {
-      const response = await axios.put('http://localhost:5000/api/auth/profile', form, {
+      const response = await api.put('/api/auth/profile', form, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -109,7 +111,7 @@ function Profile() {
     setPwSuccess('');
 
     try {
-      const response = await axios.put('http://localhost:5000/api/auth/password', {
+      const response = await api.put('/api/auth/password', {
         currentPassword: pwForm.current,
         newPassword: pwForm.new
       }, {

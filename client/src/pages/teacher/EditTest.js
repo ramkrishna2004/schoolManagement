@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import TestForm from '../../components/TestForm';
+import api from '../../config/api';
+
 
 function EditTest() {
   const [test, setTest] = useState(null);
@@ -28,7 +30,7 @@ function EditTest() {
 
   const fetchClasses = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/classes', {
+      const response = await api.get('/api/classes', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }

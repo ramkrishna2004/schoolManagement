@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+
 import { useAuth } from '../../contexts/AuthContext';
+import api from '../../config/api';
+
 
 function Classes() {
   const [classes, setClasses] = useState([]);
@@ -12,7 +14,7 @@ function Classes() {
     const fetchClasses = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:5000/api/students/enrolled-classes', {
+        const response = await api.get('/api/students/enrolled-classes', {
           headers: {
             Authorization: `Bearer ${token}`
           }

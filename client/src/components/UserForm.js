@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AnimatedInput from './AnimatedInput';
 
 function UserForm({ userType, initialData, onSubmit, isEdit }) {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ function UserForm({ userType, initialData, onSubmit, isEdit }) {
     }
   });
   const [formErrors, setFormErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (initialData) {
@@ -118,216 +120,151 @@ function UserForm({ userType, initialData, onSubmit, isEdit }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-          {userType === 'admin' ? 'Admin Name' : 'Name'}
-        </label>
-        <input
-          type="text"
-          name="name"
+    <form onSubmit={handleSubmit} className="space-y-6 max-w-md mx-auto bg-white p-8 rounded-xl shadow-xl border border-gray-100">
+      <h2 className="text-2xl font-bold text-indigo-700 mb-4 text-center">{isEdit ? 'Edit User' : 'Create User'}</h2>
+      <AnimatedInput
           id="name"
+        label={userType === 'admin' ? 'Admin Name' : 'Name'}
           value={formData.name}
           onChange={handleChange}
-          className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm ${
-            formErrors.name ? 'border-red-300' : 'border-gray-300'
-          }`}
+        name="name"
+        autoComplete="off"
         />
-        {formErrors.name && (
-          <p className="mt-1 text-sm text-red-600">{formErrors.name}</p>
-        )}
-      </div>
+      {formErrors.name && <p className="text-xs text-red-600 -mt-4 mb-2">{formErrors.name}</p>}
 
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-          Email
-        </label>
-        <input
-          type="email"
-          name="email"
+      <AnimatedInput
           id="email"
+        label="Email"
           value={formData.email}
           onChange={handleChange}
-          className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm ${
-            formErrors.email ? 'border-red-300' : 'border-gray-300'
-          }`}
+        name="email"
+        type="email"
+        autoComplete="off"
         />
-        {formErrors.email && (
-          <p className="mt-1 text-sm text-red-600">{formErrors.email}</p>
-        )}
-      </div>
+      {formErrors.email && <p className="text-xs text-red-600 -mt-4 mb-2">{formErrors.email}</p>}
 
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-          {isEdit ? 'New Password (leave blank to keep current)' : 'Password'}
-        </label>
-        <input
-          type="password"
-          name="password"
+      <div className="relative">
+        <AnimatedInput
           id="password"
+          label={isEdit ? 'New Password (leave blank to keep current)' : 'Password'}
           value={formData.password}
           onChange={handleChange}
-          className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm ${
-            formErrors.password ? 'border-red-300' : 'border-gray-300'
-          }`}
+          name="password"
+          type={showPassword ? 'text' : 'password'}
+          autoComplete="new-password"
         />
-        {formErrors.password && (
-          <p className="mt-1 text-sm text-red-600">{formErrors.password}</p>
-        )}
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute right-3 top-7 text-xs text-indigo-600 hover:underline focus:outline-none"
+        >
+          {showPassword ? 'Hide' : 'Show'}
+        </button>
       </div>
+      {formErrors.password && <p className="text-xs text-red-600 -mt-4 mb-2">{formErrors.password}</p>}
 
-      <div>
-        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-          Confirm Password
-        </label>
-        <input
-          type="password"
-          name="confirmPassword"
+      <div className="relative">
+        <AnimatedInput
           id="confirmPassword"
+          label="Confirm Password"
           value={formData.confirmPassword}
           onChange={handleChange}
-          className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm ${
-            formErrors.confirmPassword ? 'border-red-300' : 'border-gray-300'
-          }`}
+          name="confirmPassword"
+          type={showPassword ? 'text' : 'password'}
+          autoComplete="new-password"
         />
-        {formErrors.confirmPassword && (
-          <p className="mt-1 text-sm text-red-600">{formErrors.confirmPassword}</p>
-        )}
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute right-3 top-7 text-xs text-indigo-600 hover:underline focus:outline-none"
+        >
+          {showPassword ? 'Hide' : 'Show'}
+        </button>
       </div>
+      {formErrors.confirmPassword && <p className="text-xs text-red-600 -mt-4 mb-2">{formErrors.confirmPassword}</p>}
 
-      <div>
-        <label htmlFor="age" className="block text-sm font-medium text-gray-700">
-          Age
-        </label>
-        <input
-          type="number"
-          name="age"
+      <AnimatedInput
           id="age"
+        label="Age"
           value={formData.age}
           onChange={handleChange}
-          className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm ${
-            formErrors.age ? 'border-red-300' : 'border-gray-300'
-          }`}
+        name="age"
+        type="number"
+        autoComplete="off"
         />
-        {formErrors.age && (
-          <p className="mt-1 text-sm text-red-600">{formErrors.age}</p>
-        )}
-      </div>
+      {formErrors.age && <p className="text-xs text-red-600 -mt-4 mb-2">{formErrors.age}</p>}
 
       {userType === 'admin' && (
-        <div>
-          <label htmlFor="organizationName" className="block text-sm font-medium text-gray-700">
-            Organization Name
-          </label>
-          <input
-            type="text"
-            name="organizationName"
+        <>
+          <AnimatedInput
             id="organizationName"
+            label="Organization Name"
             value={formData.organizationName}
             onChange={handleChange}
-            className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm ${
-              formErrors.organizationName ? 'border-red-300' : 'border-gray-300'
-            }`}
+            name="organizationName"
+            autoComplete="off"
           />
-          {formErrors.organizationName && (
-            <p className="mt-1 text-sm text-red-600">{formErrors.organizationName}</p>
-          )}
-        </div>
+          {formErrors.organizationName && <p className="text-xs text-red-600 -mt-4 mb-2">{formErrors.organizationName}</p>}
+        </>
       )}
 
       {userType === 'teacher' && (
         <>
-          <div>
-            <label htmlFor="contact" className="block text-sm font-medium text-gray-700">
-              Contact
-            </label>
-            <input
-              type="text"
-              name="extraDetails.contact"
+          <AnimatedInput
               id="contact"
+            label="Contact"
               value={formData.extraDetails.contact}
               onChange={handleChange}
-              className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm ${
-                formErrors['extraDetails.contact'] ? 'border-red-300' : 'border-gray-300'
-              }`}
+            name="extraDetails.contact"
+            autoComplete="off"
             />
-            {formErrors['extraDetails.contact'] && (
-              <p className="mt-1 text-sm text-red-600">{formErrors['extraDetails.contact']}</p>
-            )}
-          </div>
-          <div>
-            <label htmlFor="qualifications" className="block text-sm font-medium text-gray-700">
-              Qualifications
-            </label>
-            <input
-              type="text"
-              name="extraDetails.qualifications"
+          {formErrors['extraDetails.contact'] && <p className="text-xs text-red-600 -mt-4 mb-2">{formErrors['extraDetails.contact']}</p>}
+          <AnimatedInput
               id="qualifications"
+            label="Qualifications"
               value={formData.extraDetails.qualifications}
               onChange={handleChange}
-              className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm ${
-                formErrors['extraDetails.qualifications'] ? 'border-red-300' : 'border-gray-300'
-              }`}
+            name="extraDetails.qualifications"
+            autoComplete="off"
             />
-            {formErrors['extraDetails.qualifications'] && (
-              <p className="mt-1 text-sm text-red-600">{formErrors['extraDetails.qualifications']}</p>
-            )}
-          </div>
+          {formErrors['extraDetails.qualifications'] && <p className="text-xs text-red-600 -mt-4 mb-2">{formErrors['extraDetails.qualifications']}</p>}
         </>
       )}
 
       {userType === 'student' && (
         <>
-          <div>
-            <label htmlFor="address" className="block text-sm font-medium text-gray-700">
-              Address
-            </label>
-            <input
-              type="text"
-              name="extraDetails.address"
+          <AnimatedInput
               id="address"
+            label="Address"
               value={formData.extraDetails.address}
               onChange={handleChange}
-              className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm ${
-                formErrors['extraDetails.address'] ? 'border-red-300' : 'border-gray-300'
-              }`}
+            name="extraDetails.address"
+            autoComplete="off"
             />
-            {formErrors['extraDetails.address'] && (
-              <p className="mt-1 text-sm text-red-600">{formErrors['extraDetails.address']}</p>
-            )}
-          </div>
-          <div>
-            <label htmlFor="parentContact" className="block text-sm font-medium text-gray-700">
-              Parent Contact
-            </label>
-            <input
-              type="text"
-              name="extraDetails.parentContact"
+          {formErrors['extraDetails.address'] && <p className="text-xs text-red-600 -mt-4 mb-2">{formErrors['extraDetails.address']}</p>}
+          <AnimatedInput
               id="parentContact"
+            label="Parent Contact"
               value={formData.extraDetails.parentContact}
               onChange={handleChange}
-              className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm ${
-                formErrors['extraDetails.parentContact'] ? 'border-red-300' : 'border-gray-300'
-              }`}
+            name="extraDetails.parentContact"
+            autoComplete="off"
             />
-            {formErrors['extraDetails.parentContact'] && (
-              <p className="mt-1 text-sm text-red-600">{formErrors['extraDetails.parentContact']}</p>
-            )}
-          </div>
+          {formErrors['extraDetails.parentContact'] && <p className="text-xs text-red-600 -mt-4 mb-2">{formErrors['extraDetails.parentContact']}</p>}
         </>
       )}
 
-      <div className="flex justify-end space-x-3">
+      <div className="flex justify-end space-x-2 pt-2">
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          className="px-5 py-2 text-sm font-semibold text-indigo-700 bg-white border border-indigo-200 rounded-lg shadow hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-400"
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          className="px-5 py-2 text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-blue-400 rounded-lg shadow hover:from-indigo-600 hover:to-blue-500 focus:outline-none focus:ring-2 focus:ring-indigo-400"
         >
           {isEdit ? 'Update' : 'Create'}
         </button>

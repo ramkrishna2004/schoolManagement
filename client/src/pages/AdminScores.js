@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import ScoreList from '../components/ScoreList';
+import api from '../config/api';
+
 
 const PAGE_SIZE = 10;
 
@@ -31,10 +32,10 @@ const AdminScores = () => {
     setLoading(true);
     try {
       const [scoresRes, classesRes, testsRes, studentsRes] = await Promise.all([
-        axios.get('http://localhost:5000/api/scores', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }),
-        axios.get('http://localhost:5000/api/classes', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }),
-        axios.get('http://localhost:5000/api/tests', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }),
-        axios.get('http://localhost:5000/api/students', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }),
+        api.get('/api/scores', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }),
+        api.get('/api/classes', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }),
+        api.get('/api/tests', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }),
+        api.get('/api/students', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }),
       ]);
       setScores(scoresRes.data.data);
       setClasses(classesRes.data.data);

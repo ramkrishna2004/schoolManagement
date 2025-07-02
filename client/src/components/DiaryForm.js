@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import AnimatedInput from './AnimatedInput';
 
 const DiaryForm = ({ onSubmit, initialData, classOptions, onCancel }) => {
   const [date, setDate] = useState(initialData?.date ? initialData.date.split('T')[0] : new Date().toISOString().split('T')[0]);
@@ -34,26 +35,25 @@ const DiaryForm = ({ onSubmit, initialData, classOptions, onCancel }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-lg shadow-md border">
+    <form onSubmit={handleSubmit} className="space-y-4 bg-white p-8 rounded-xl shadow-xl border max-w-xl mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block font-semibold text-gray-700">Date</label>
-          <input
-            type="date"
-            className="w-full border rounded p-2 mt-1"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            required
-          />
-        </div>
+        <AnimatedInput
+          id="date"
+          label="Date"
+          type="date"
+          value={date}
+          onChange={e => setDate(e.target.value)}
+          name="date"
+        />
         {classOptions && classOptions.length > 0 && (
-          <div>
-            <label className="block font-semibold text-gray-700">Class</label>
+          <div className="relative group my-6">
             <select
-              className="w-full border rounded p-2 mt-1"
+              className="w-full px-3 py-2 pt-5 bg-white border-2 border-gray-200 rounded-lg shadow-md focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-300 transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] text-gray-800 text-sm appearance-none"
               value={classId}
-              onChange={(e) => setClassId(e.target.value)}
+              onChange={e => setClassId(e.target.value)}
               required
+              name="classId"
+              id="classId"
             >
               {classOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -61,6 +61,7 @@ const DiaryForm = ({ onSubmit, initialData, classOptions, onCancel }) => {
                 </option>
               ))}
             </select>
+            <label htmlFor="classId" className="absolute left-3 top-3.5 text-gray-500 text-base pointer-events-none transition-all duration-200 transform origin-left peer-focus:-top-2 peer-focus:text-xs peer-focus:text-indigo-600 peer-focus:bg-white peer-focus:px-1 peer-focus:shadow-lg">Class</label>
           </div>
         )}
       </div>
@@ -71,24 +72,21 @@ const DiaryForm = ({ onSubmit, initialData, classOptions, onCancel }) => {
       {entries.map((entry, index) => (
         <div key={index} className="space-y-2 border p-4 rounded-md bg-gray-50 relative">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block font-semibold text-gray-600">Subject</label>
-              <input
-                type="text"
-                className="w-full border rounded p-2 mt-1"
-                placeholder="e.g., Mathematics"
-                value={entry.subject}
-                onChange={(e) => handleEntryChange(index, 'subject', e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <label className="block font-semibold text-gray-600">Work / Homework</label>
+            <AnimatedInput
+              id={`subject-${index}`}
+              label="Subject"
+              value={entry.subject}
+              onChange={e => handleEntryChange(index, 'subject', e.target.value)}
+              name="subject"
+              autoComplete="off"
+            />
+            <div className="my-6">
+              <label className="block text-gray-600 text-xs mb-1 ml-1">Work / Homework</label>
               <textarea
-                className="w-full border rounded p-2 mt-1 min-h-[40px]"
+                className="w-full border-2 border-gray-200 rounded-lg shadow-md p-2 min-h-[40px] focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-300 transition-all duration-200 text-gray-800 text-sm"
                 placeholder="e.g., Completed chapter 5 exercises"
                 value={entry.work}
-                onChange={(e) => handleEntryChange(index, 'work', e.target.value)}
+                onChange={e => handleEntryChange(index, 'work', e.target.value)}
                 required
               />
             </div>
@@ -113,15 +111,15 @@ const DiaryForm = ({ onSubmit, initialData, classOptions, onCancel }) => {
         + Add Subject
       </button>
 
-      <div className="flex space-x-2 pt-4">
-        <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded-md shadow hover:bg-blue-700">
+      <div className="flex space-x-2 pt-4 justify-end">
+        <button type="submit" className="px-5 py-2 text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-blue-400 rounded-lg shadow hover:from-indigo-600 hover:to-blue-500 focus:outline-none focus:ring-2 focus:ring-indigo-400">
           Save Diary
         </button>
         {onCancel && (
           <button
             type="button"
             onClick={onCancel}
-            className="bg-gray-300 text-gray-800 px-6 py-2 rounded-md hover:bg-gray-400"
+            className="px-5 py-2 text-sm font-semibold text-indigo-700 bg-white border border-indigo-200 rounded-lg shadow hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-400"
           >
             Cancel
           </button>

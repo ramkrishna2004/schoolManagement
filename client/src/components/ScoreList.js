@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import api from '../config/api';
+
 
 const ScoreList = ({ scores, onDelete, isTeacher = false }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -39,7 +41,7 @@ const ScoreList = ({ scores, onDelete, isTeacher = false }) => {
 
     // Fetch names for missing studentIds
     if (missingStudentIds.length > 0) {
-      axios.post('http://localhost:5000/api/students/batch', { ids: missingStudentIds })
+      api.post('/api/students/batch', { ids: missingStudentIds })
         .then(res => {
           const nameMap = {};
           res.data.data.forEach(student => {

@@ -4,7 +4,7 @@ const { protect, authorize } = require('../middleware/auth');
 const { createOfflineTest, manualScoreEntry, updateManualScoreEntry } = require('../controllers/offlineTestController');
 
 router.use(protect);
-router.use(authorize('teacher'));
+router.use(authorize('admin', 'teacher'));
 
 router.post('/create', createOfflineTest);
 router.post('/score-entry', manualScoreEntry);

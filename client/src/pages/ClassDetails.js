@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../config/api';
 import { useAuth } from '../contexts/AuthContext';
+
 
 function ClassDetails() {
   const { id } = useParams();
@@ -21,7 +22,7 @@ function ClassDetails() {
   const fetchClassDetails = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost:5000/api/classes/${id}`, {
+      const response = await api.get(`/api/classes/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -38,7 +39,7 @@ function ClassDetails() {
 
   const fetchAvailableStudents = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/students', {
+      const response = await api.get('/api/students', {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -53,8 +54,8 @@ function ClassDetails() {
     if (!selectedStudent) return;
 
     try {
-      await axios.post(
-        `http://localhost:5000/api/classes/${id}/enroll`,
+      await api.post(
+        `/api/classes/${id}/enroll`,
         { studentId: selectedStudent },
         {
           headers: {
@@ -72,8 +73,8 @@ function ClassDetails() {
 
   const handleUnenrollStudent = async (studentId) => {
     try {
-      await axios.post(
-        `http://localhost:5000/api/classes/${id}/unenroll`,
+      await api.post(
+        `/api/classes/${id}/unenroll`,
         { studentId },
         {
           headers: {
@@ -94,7 +95,7 @@ function ClassDetails() {
     }
 
     try {
-      await axios.delete(`http://localhost:5000/api/classes/${id}`, {
+      await api.delete(`/api/classes/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }

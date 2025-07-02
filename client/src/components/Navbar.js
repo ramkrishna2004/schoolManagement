@@ -47,7 +47,7 @@ function Navbar() {
             <span className="inline-block bg-sky-400 rounded-full p-2 shadow-lg">
               <svg width="32" height="32" fill="none" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#38bdf8"/><text x="16" y="21" textAnchor="middle" fontSize="16" fill="white" fontWeight="bold">SMS</text></svg>
             </span>
-            <Link to="/" className="text-xl font-extrabold tracking-tight text-sky-800 hover:text-blue-700 transition-colors duration-200">Student Management System</Link>
+            <Link to="/" className="text-l font-extrabold tracking-tight text-sky-800 hover:text-blue-700 transition-colors duration-200">School Management System</Link>
           </div>
           {/* Hamburger for mobile */}
           <div className="flex xl:hidden">

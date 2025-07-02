@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 function Login() {
   const [formData, setFormData] = useState({
-    email: '',
+    identifier: '',
     password: '',
   });
   const [error, setError] = useState('');
@@ -26,7 +26,12 @@ function Login() {
     setLoading(true);
 
     try {
-      const userData = await login(formData.email, formData.password);
+      if (!formData.identifier) {
+        setError('Please enter your Email or Roll Number');
+        setLoading(false);
+        return;
+      }
+      const userData = await login(formData.identifier, formData.password);
       if (userData.role === 'superadmin') {
         navigate('/superadmin/dashboard');
       } else {
@@ -66,19 +71,19 @@ function Login() {
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label
-                htmlFor="email"
+                htmlFor="identifier"
                 className="block text-sm font-medium text-gray-700"
               >
-                Email address
+                Email or Roll Number
               </label>
               <div className="mt-1">
                 <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
+                  id="identifier"
+                  name="identifier"
+                  type="text"
+                  autoComplete="username"
                   required
-                  value={formData.email}
+                  value={formData.identifier}
                   onChange={handleChange}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
