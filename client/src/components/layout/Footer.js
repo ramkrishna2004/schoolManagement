@@ -38,7 +38,7 @@ function Footer() {
         </div>
       </div>
       <div className="relative z-10 w-full max-w-7xl mx-auto mt-8 border-t border-sky-200 pt-4 text-center text-xs sm:text-sm text-blue-800 flex flex-col md:flex-row justify-between items-center gap-2 px-2 sm:px-6 lg:px-8 xl:px-12 2xl:px-20">
-        <span className="block">&copy; {new Date().getFullYear()} Student Management System. All rights reserved.</span>
+        <span className="block">&copy; {new Date().getFullYear()} School Management System. All rights reserved.</span>
         <span className="block text-gray-500 font-normal">Crafted by 
           <Link to="/aboutUs">
             <button
