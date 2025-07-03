@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../config/api';
 import { useAuth } from '../../contexts/AuthContext';
 import TestResult from './TestResult';
 import Timer from '../../components/common/Timer';
 import Clock from '../../components/common/Clock';
-import api from '../../config/api';
 
 
 function Tests() {
@@ -63,7 +62,7 @@ function Tests() {
     try {
       if (!isInProgress) {
         // Only call start if it's a new attempt
-        await axios.post(`http://localhost:5000/api/tests/${testId}/attempts/start`, {}, {
+        await api.post(`/api/tests/${testId}/attempts/start`, {}, {
           headers: { Authorization: `Bearer ${token}` }
         });
       }

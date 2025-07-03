@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { useAuth } from '../../contexts/AuthContext';
 import api from '../../config/api';
+import { useAuth } from '../../contexts/AuthContext';
 
 
 function Tests() {
@@ -39,7 +38,7 @@ function Tests() {
   const handleDeleteTest = async (id) => {
     if (window.confirm('Are you sure you want to delete this test?')) {
       try {
-        await axios.delete(`http://localhost:5000/api/tests/${id}`, {
+        await api.delete(`/api/tests/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }

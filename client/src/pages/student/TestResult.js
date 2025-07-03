@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import { useParams, Link } from 'react-router-dom';
 
 const TestResult = () => {
@@ -19,15 +19,15 @@ const TestResult = () => {
     setLoading(true);
     try {
       // Fetch test info
-      const testRes = await axios.get(`http://localhost:5000/api/tests/${testId}`);
+      const testRes = await api.get(`/api/tests/${testId}`);
       setTest(testRes.data.data);
       // Fetch student's score for this test
-      const scoreRes = await axios.get(`http://localhost:5000/api/scores?testId=${testId}`, {
+      const scoreRes = await api.get(`/api/scores?testId=${testId}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       setScore(scoreRes.data.data[0]);
       // Fetch student's attempt for this test
-      const attemptRes = await axios.get(`http://localhost:5000/api/tests/${testId}/attempts`, {
+      const attemptRes = await api.get(`/api/tests/${testId}/attempts`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       setAttempt(attemptRes.data.data);

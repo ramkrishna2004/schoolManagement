@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../config/api';
 import { useAuth } from '../../contexts/AuthContext';
 import {
   Box,
@@ -38,16 +38,15 @@ function TakeTest() {
       setError(null);
 
       const [testResponse, questionsResponse, attemptResponse] = await Promise.all([
-        axios.get(`http://localhost:5000/api/tests/${id}`, {
+        api.get(`/api/tests/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        axios.get(`http://localhost:5000/api/tests/${id}/questions`, {
+        api.get(`/api/tests/${id}/questions`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        axios.get(`http://localhost:5000/api/tests/${id}/attempts`, {
+        api.get(`/api/tests/${id}/attempts`, {
           headers: { Authorization: `Bearer ${token}` }
         }).catch(err => {
-          // If no attempt found, don't throw, just return null
           if (err.response && err.response.status === 404) return { data: { data: null } };
           throw err;
         })
@@ -136,8 +135,8 @@ function TakeTest() {
     clearInterval(timerRef.current); // Stop the timer
 
     try {
-      const response = await axios.put(
-        `http://localhost:5000/api/tests/${id}/attempts/submit`,
+      const response = await api.put(
+        `/api/tests/${id}/attempts/submit`,
         { submittedAnswers: answers },
         {
           headers: { Authorization: `Bearer ${token}` }

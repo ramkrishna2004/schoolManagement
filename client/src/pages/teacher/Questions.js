@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../config/api';
 import {
   Box,
   Container,
@@ -56,8 +56,8 @@ const Questions = () => {
     const fetchTestAndQuestions = async () => {
       try {
         const [testResponse, questionsResponse] = await Promise.all([
-          axios.get(`http://localhost:5000/api/tests/${id}`),
-          axios.get(`http://localhost:5000/api/tests/${id}/questions`)
+          api.get(`/api/tests/${id}`),
+          api.get(`/api/tests/${id}/questions`)
         ]);
 
         if (testResponse.data.success) {
@@ -98,7 +98,7 @@ const Questions = () => {
   const handleDeleteQuestion = async (questionId) => {
     if (window.confirm('Are you sure you want to delete this question?')) {
       try {
-        await axios.delete(`http://localhost:5000/api/tests/${id}/questions/${questionId}`);
+        await api.delete(`/api/tests/${id}/questions/${questionId}`);
         setQuestions(questions.filter(q => q._id !== questionId));
       } catch (err) {
         setError(err.response?.data?.message || 'Error deleting question');
@@ -157,8 +157,8 @@ const Questions = () => {
 
     try {
       if (currentQuestion._id) {
-        const response = await axios.put(
-          `http://localhost:5000/api/tests/${id}/questions/${currentQuestion._id}`,
+        const response = await api.put(
+          `/api/tests/${id}/questions/${currentQuestion._id}`,
           currentQuestion
         );
         if (response.data.success) {
@@ -167,8 +167,8 @@ const Questions = () => {
           ));
         }
       } else {
-        const response = await axios.post(
-          `http://localhost:5000/api/tests/${id}/questions`,
+        const response = await api.post(
+          `/api/tests/${id}/questions`,
           currentQuestion
         );
         if (response.data.success) {

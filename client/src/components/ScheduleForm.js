@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import AnimatedInput from './AnimatedInput';
 import api from '../config/api';
+import AnimatedInput from './AnimatedInput';
 
 
 function ScheduleForm({ onSubmit, onCancel, initialData }) {
@@ -71,8 +70,8 @@ function ScheduleForm({ onSubmit, onCancel, initialData }) {
     
     try {
       // Check for conflicts before submitting
-      const conflictsResponse = await axios.post(
-        'http://localhost:5000/api/schedules/check-conflicts',
+      const conflictsResponse = await api.post(
+        '/api/schedules/check-conflicts',
         {
           ...formData,
           scheduleId: initialData?._id

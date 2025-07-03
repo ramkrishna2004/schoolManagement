@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import ScoreList from '../../components/ScoreList';
 import { useAuth } from '../../contexts/AuthContext';
-import api from '../../config/api';
 
 
 const Scores = () => {
@@ -64,7 +63,7 @@ const Scores = () => {
   const handleDelete = async (scoreId) => {
     if (window.confirm('Are you sure you want to delete this score?')) {
       try {
-        await axios.delete(`http://localhost:5000/api/scores/${scoreId}`);
+        await api.delete(`/api/scores/${scoreId}`);
         setScores(scores.filter(score => score._id !== scoreId));
       } catch (err) {
         setError(err.response?.data?.error || 'Failed to delete score');

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import api from '../config/api';
 
 
@@ -20,7 +19,7 @@ const ScoreList = ({ scores, onDelete, isTeacher = false }) => {
     // Fetch titles for missing testIds
     missingTestIds.forEach((testId) => {
       if (!testTitles[testId]) {
-        axios.get(`http://localhost:5000/api/tests/${testId}`)
+        api.get(`/api/tests/${testId}`)
           .then(res => {
             setTestTitles(prev => ({
               ...prev,

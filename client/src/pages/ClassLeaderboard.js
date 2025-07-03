@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import api from '../config/api';
 import Leaderboard from '../components/Leaderboard';
 
 const ClassLeaderboard = () => {
@@ -17,7 +17,7 @@ const ClassLeaderboard = () => {
   const fetchLeaderboard = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost:5000/api/scores/classes/${classId}/leaderboard`);
+      const response = await api.get(`/api/scores/classes/${classId}/leaderboard`);
       setScores(response.data.data);
       setClassInfo(response.data.data[0]?.classId);
       setError(null);

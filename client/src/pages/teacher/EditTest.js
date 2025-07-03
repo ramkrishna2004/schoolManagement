@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
-import TestForm from '../../components/TestForm';
 import api from '../../config/api';
+import TestForm from '../../components/TestForm';
 
 
 function EditTest() {
@@ -15,7 +14,7 @@ function EditTest() {
 
   const fetchTest = useCallback(async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/tests/${id}`, {
+      const response = await api.get(`/api/tests/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -48,7 +47,7 @@ function EditTest() {
 
   const handleSubmit = async (testData) => {
     try {
-      await axios.put(`http://localhost:5000/api/tests/${id}`, testData, {
+      await api.put(`/api/tests/${id}`, testData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'

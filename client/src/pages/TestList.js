@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../config/api';
@@ -38,7 +37,7 @@ function TestList() {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this test?')) {
       try {
-        await axios.delete(`http://localhost:5000/api/tests/${id}`, {
+        await api.delete(`/api/tests/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }

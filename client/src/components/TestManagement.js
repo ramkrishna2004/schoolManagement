@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../config/api';
 import { useAuth } from '../contexts/AuthContext';
 import TestForm from './TestForm';
 import { useNavigate } from 'react-router-dom';
-import api from '../config/api';
 
 
 function TestManagement() {
@@ -50,7 +49,7 @@ function TestManagement() {
 
   const handleUpdateTest = async (testData) => {
     try {
-      const response = await axios.put(`http://localhost:5000/api/tests/${selectedTest._id}`, testData, {
+      const response = await api.put(`/api/tests/${selectedTest._id}`, testData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -68,7 +67,7 @@ function TestManagement() {
   const handleDeleteTest = async (id) => {
     if (window.confirm('Are you sure you want to delete this test?')) {
       try {
-        await axios.delete(`http://localhost:5000/api/tests/${id}`, {
+        await api.delete(`/api/tests/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
