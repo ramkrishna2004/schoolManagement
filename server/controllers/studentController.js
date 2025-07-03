@@ -7,11 +7,16 @@ const { adminScopedQuery } = require('../utils/adminQueryHelper');
 // @access  Private/Admin
 exports.getStudents = async (req, res) => {
   try {
-    const { includeInactive } = req.query;
+    const { includeInactive, page = 1, limit = 10 } = req.query;
     const query = includeInactive === 'true' ? {} : { isActive: true };
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 10;
+    const skip = (pageNum - 1) * limitNum;
 
     // Scope by adminId
-    const students = await adminScopedQuery(Student, req, query).select('-password');
+    const baseQuery = adminScopedQuery(Student, req, query).select('-password');
+    const total = await baseQuery.clone().countDocuments();
+    const students = await baseQuery.skip(skip).limit(limitNum);
     // Get all student IDs
     const studentIds = students.map(s => s._id);
     // Fetch corresponding users with role 'student' and matching roleId
@@ -29,6 +34,9 @@ exports.getStudents = async (req, res) => {
     res.json({
       success: true,
       count: studentsWithRollno.length,
+      total,
+      currentPage: pageNum,
+      totalPages: Math.ceil(total / limitNum),
       data: studentsWithRollno
     });
   } catch (error) {

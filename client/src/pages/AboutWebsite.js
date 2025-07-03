@@ -201,9 +201,9 @@ export default function AboutWebsite() {
           justifyContent: 'center',
           position: 'relative',
           overflow: 'hidden',
-        }}
-      >
-        <motion.div
+      }}
+    >
+      <motion.div
           initial={{ backgroundPosition: '0% 50%' }}
           animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
           transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}

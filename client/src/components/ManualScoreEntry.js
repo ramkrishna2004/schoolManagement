@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../config/api';
 
 const ManualScoreEntry = ({ testId }) => {
   const [students, setStudents] = useState([]);
@@ -15,7 +15,7 @@ const ManualScoreEntry = ({ testId }) => {
     let fetchedStudents = [];
     let fetchedScores = [];
     // Fetch test details
-    axios.get(`/api/tests/${testId}`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
+    api.get(`/api/tests/${testId}`)
       .then(res => {
         const testData = res.data.data;
         if (testData.classId) {
@@ -28,12 +28,12 @@ const ManualScoreEntry = ({ testId }) => {
           return;
         }
         // Fetch students
-        axios.get(`/api/classes/${classId}`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
+        api.get(`/api/classes/${classId}`)
           .then(res2 => {
             fetchedStudents = res2.data.data.studentIds || [];
             setStudents(fetchedStudents);
             // Fetch existing scores for this test
-            axios.get(`/api/scores?testId=${testId}`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
+            api.get(`/api/scores?testId=${testId}`)
               .then(res3 => {
                 fetchedScores = res3.data.data || [];
                 // Map scores to students
@@ -80,10 +80,10 @@ const ManualScoreEntry = ({ testId }) => {
       return { ...entry, score };
     });
     try {
-      await axios.post('/api/offline-tests/score-entry', {
+      await api.post('/api/offline-tests/score-entry', {
         testId,
         scores: scoresWithPercentage
-      }, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+      });
       setMsg('Scores submitted!');
     } catch (err) {
       setMsg(err.response?.data?.error || 'Error submitting scores');
@@ -97,12 +97,12 @@ const ManualScoreEntry = ({ testId }) => {
     setMsg('');
     const entry = scores[idx];
     try {
-      await axios.put('/api/offline-tests/update-score-entry', {
+      await api.put('/api/offline-tests/update-score-entry', {
         testId,
         studentId: entry.studentId,
         obtainedMarks: entry.obtainedMarks,
         totalMarks: entry.totalMarks
-      }, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+      });
       setMsg('Score updated!');
     } catch (err) {
       setMsg(err.response?.data?.error || 'Error updating score');

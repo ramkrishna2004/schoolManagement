@@ -10,6 +10,10 @@ const StudentTestAttempt = require('../models/StudentTestAttempt');
 exports.getScores = async (req, res) => {
   try {
     let query = { isActive: true };
+    const { page = 1, limit = 10 } = req.query;
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 10;
+    const skip = (pageNum - 1) * limitNum;
     
     // If user is a student, only show their scores
     if (req.user.role === 'student') {
@@ -49,15 +53,21 @@ exports.getScores = async (req, res) => {
       query.adminId = req.user.adminId;
     }
 
+    const total = await Score.countDocuments(query);
     const scores = await Score.find(query)
       .populate('studentId', 'name email')
       .populate('testId', 'title subject testType')
       .populate('classId', 'className subjectName')
-      .sort('-submissionDate');
+      .sort('-submissionDate')
+      .skip(skip)
+      .limit(limitNum);
 
     res.json({
       success: true,
       count: scores.length,
+      total,
+      currentPage: pageNum,
+      totalPages: Math.ceil(total / limitNum),
       data: scores
     });
   } catch (error) {

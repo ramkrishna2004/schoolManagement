@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../config/api';
 import {
   Box,
   Container,
@@ -24,9 +24,9 @@ const TestDetails = () => {
   useEffect(() => {
     const fetchTest = async () => {
       try {
-        const response = await axios.get(`/api/tests/${id}`);
-        if (response.data.success) {
-          setTest(response.data.data);
+        const testRes = await api.get(`/api/tests/${id}`);
+        if (testRes.data.success) {
+          setTest(testRes.data.data);
         }
       } catch (err) {
         setError(err.response?.data?.message || 'Error fetching test details');
@@ -41,7 +41,7 @@ const TestDetails = () => {
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this test?')) {
       try {
-        await axios.delete(`/api/tests/${id}`);
+        await api.delete(`/api/tests/${id}`);
         navigate('/teacher/tests');
       } catch (err) {
         setError(err.response?.data?.message || 'Error deleting test');

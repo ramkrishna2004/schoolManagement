@@ -11,15 +11,20 @@ function AdminHolidays() {
   const [editingId, setEditingId] = useState(null);
   const [editDate, setEditDate] = useState('');
   const [editReason, setEditReason] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
-    fetchHolidays();
-  }, []);
+    fetchHolidays(currentPage);
+  }, [currentPage]);
 
-  const fetchHolidays = async () => {
+  const fetchHolidays = async (page = 1) => {
     try {
-      const response = await api.get('/api/holidays');
+      const response = await api.get(`/api/holidays?page=${page}&limit=${pageSize}`);
       setHolidays(response.data.data);
+      setTotalPages(response.data.totalPages);
+      setCurrentPage(response.data.page);
     } catch (err) {
       setError('Failed to fetch holidays');
     }
@@ -34,6 +39,7 @@ function AdminHolidays() {
       setReason('');
       setSuccess('Holiday added successfully!');
       setTimeout(() => setSuccess(''), 3000);
+      fetchHolidays(currentPage);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to add holiday');
       setTimeout(() => setError(''), 3000);
@@ -64,6 +70,7 @@ function AdminHolidays() {
       setEditReason('');
       setSuccess('Holiday updated successfully!');
       setTimeout(() => setSuccess(''), 3000);
+      fetchHolidays(currentPage);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update holiday');
       setTimeout(() => setError(''), 3000);
@@ -77,6 +84,7 @@ function AdminHolidays() {
         setHolidays(holidays.filter(h => h._id !== id));
         setSuccess('Holiday deleted successfully!');
         setTimeout(() => setSuccess(''), 3000);
+        fetchHolidays(currentPage);
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to delete holiday');
         setTimeout(() => setError(''), 3000);
@@ -222,6 +230,35 @@ function AdminHolidays() {
           )}
         </div>
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 mt-6">
+          <button
+            onClick={() => fetchHolidays(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="px-3 py-1 rounded bg-sky-100 text-sky-700 disabled:opacity-50"
+          >
+            Prev
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i + 1}
+              onClick={() => fetchHolidays(i + 1)}
+              className={`px-3 py-1 rounded ${currentPage === i + 1 ? 'bg-sky-400 text-white' : 'bg-sky-100 text-sky-700'}`}
+            >
+              {i + 1}
+            </button>
+          ))}
+          <button
+            onClick={() => fetchHolidays(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 rounded bg-sky-100 text-sky-700 disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 }

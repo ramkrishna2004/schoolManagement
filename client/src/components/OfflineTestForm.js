@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+
 import AnimatedInput from './AnimatedInput';
+import api from '../config/api';
 
 const testTypes = ['Unit Test', 'Mid Term', 'Final', 'Quiz'];
 
@@ -14,7 +15,7 @@ const OfflineTestForm = ({ onTestCreated }) => {
   const [msg, setMsg] = useState('');
 
   useEffect(() => {
-    axios.get('/api/classes', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
+    api.get('/api/classes')
       .then(res => setClasses(res.data.data || []));
   }, []);
 
@@ -25,9 +26,7 @@ const OfflineTestForm = ({ onTestCreated }) => {
     setLoading(true);
     setMsg('');
     try {
-      const res = await axios.post('/api/offline-tests/create', form, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
+      const res = await api.post('/api/offline-tests/create', form);
       setMsg('Offline test created!');
       setForm({ testTitle: '', subjectName: '', classId: '', type: '', totalMarks: '', passingMarks: '', duration: '', scheduledDate: '', startTime: '', endTime: '' });
       onTestCreated && onTestCreated(res.data.data);

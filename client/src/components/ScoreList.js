@@ -1,13 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import api from '../config/api';
 
+const PAGE_SIZE = 10;
 
-const ScoreList = ({ scores, onDelete, isTeacher = false }) => {
+const ScoreList = ({ onDelete, isTeacher = false }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterBy, setFilterBy] = useState('all'); // all, test, class, student
   const [testTitles, setTestTitles] = useState({});
   const [studentNames, setStudentNames] = useState({});
   const [sortOrder, setSortOrder] = useState('desc'); // 'asc' or 'desc'
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [scores, setScores] = useState([]);
+
+  useEffect(() => {
+    fetchScores(currentPage);
+    // eslint-disable-next-line
+  }, [currentPage, searchTerm, filterBy]);
+
+  const fetchScores = async (page = 1) => {
+    try {
+      // You may want to add filter/search params here
+      const response = await api.get(`/api/scores?page=${page}&limit=${PAGE_SIZE}`);
+      setScores(response.data.data);
+      setTotalPages(response.data.totalPages);
+      setCurrentPage(response.data.currentPage);
+    } catch (err) {
+      console.error('Failed to fetch scores:', err);
+    }
+  };
 
   useEffect(() => {
     // Find all unique testIds that are missing a title
@@ -192,6 +213,26 @@ const ScoreList = ({ scores, onDelete, isTeacher = false }) => {
           </tbody>
         </table>
       </div>
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 mt-6">
+          <button
+            onClick={() => fetchScores(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="px-3 py-1 rounded bg-sky-200 text-blue-900 disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <span className="font-medium text-blue-900">Page {currentPage} of {totalPages}</span>
+          <button
+            onClick={() => fetchScores(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 rounded bg-sky-200 text-blue-900 disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import ClassList from '../components/ClassList';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../config/api';

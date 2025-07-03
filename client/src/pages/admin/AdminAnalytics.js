@@ -316,19 +316,19 @@ const AdminAnalytics = () => {
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Analytics Dashboard</h1>
               <p className="text-gray-600">Comprehensive test performance analytics</p>
               </div>
-              <div className="flex items-center gap-2">
-                <label htmlFor="academic-year" className="font-medium text-gray-700">Academic Year:</label>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full mb-8">
+                <label htmlFor="academic-year" className="font-medium text-gray-700 sm:mb-0 mb-1">Academic Year:</label>
                 <input
                   id="academic-year"
                   type="text"
-                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-base bg-white"
+                  className="w-full sm:w-auto min-w-0 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-base bg-white"
                   placeholder="2025-2026 (June 1st to May 31st)"
                   value={yearInput}
                   onChange={e => setYearInput(e.target.value)}
                   onKeyDown={e => { if (e.key === 'Enter') handleYearFilter(); }}
                 />
                 <button
-                  className="px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                  className="w-full sm:w-auto px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
                   onClick={handleYearFilter}
                 >
                   Filter

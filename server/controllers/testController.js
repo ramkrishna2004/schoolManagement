@@ -9,6 +9,10 @@ const Student = require('../models/Student');
 // @access  Private/Admin,Teacher,Student
 const getTests = asyncHandler(async (req, res) => {
   let query = { isActive: true };
+  const { page = 1, limit = 10 } = req.query;
+  const pageNum = parseInt(page, 10) || 1;
+  const limitNum = parseInt(limit, 10) || 10;
+  const skip = (pageNum - 1) * limitNum;
   
   // If user is a teacher, only show their tests
   if (req.user.role === 'teacher') {
@@ -16,7 +20,6 @@ const getTests = asyncHandler(async (req, res) => {
   }
   // If user is a student, only show tests for their enrolled classes
   else if (req.user.role === 'student') {
-    // Find classes where studentIds contains this student's _id
     const enrolledClasses = await Class.find({
       studentIds: req.user.roleId
     }).select('_id');
@@ -24,7 +27,6 @@ const getTests = asyncHandler(async (req, res) => {
   }
   // Admin can see all tests, no additional query needed
 
-  // If classId is provided in query, filter by that class
   if (req.query.classId) {
     query.classId = req.query.classId;
   }
@@ -32,16 +34,19 @@ const getTests = asyncHandler(async (req, res) => {
   if (req.user.role === 'admin') query.adminId = req.user.roleId;
   else if (req.user.adminId) query.adminId = req.user.adminId;
 
+  const total = await Test.countDocuments(query);
   let tests = await Test.find(query)
     .populate('teacherId', 'name email')
     .populate('classId', 'className subjectName')
-    .sort('-createdAt');
+    .sort('-createdAt')
+    .skip(skip)
+    .limit(limitNum);
 
-  // For students, enrich test data with their attempt status
+  // For students, enrich test data with their attempt status (only for current page)
   if (req.user.role === 'student') {
     tests = await Promise.all(tests.map(async (test) => {
       const attempt = await StudentTestAttempt.findOne({
-        studentId: req.user.roleId, // Use Student _id for attempts as well
+        studentId: req.user.roleId,
         testId: test._id,
         isActive: true
       }).lean();
@@ -52,6 +57,9 @@ const getTests = asyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,
     count: tests.length,
+    total,
+    currentPage: pageNum,
+    totalPages: Math.ceil(total / limitNum),
     data: tests
   });
 });

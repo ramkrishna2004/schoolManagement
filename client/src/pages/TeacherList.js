@@ -6,18 +6,22 @@ const PAGE_SIZE = 10;
 const TeacherList = () => {
   const [teachers, setTeachers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchTeachers();
-    setCurrentPage(1); // Reset to first page on data change
-  }, []);
+    fetchTeachers(currentPage);
+    // eslint-disable-next-line
+  }, [currentPage]);
 
-  const fetchTeachers = async () => {
+  const fetchTeachers = async (page = 1) => {
     try {
-      const response = await api.get('/api/teachers');
+      setLoading(true);
+      const response = await api.get(`/api/teachers?page=${page}&limit=${PAGE_SIZE}`);
       setTeachers(response.data.data || []);
+      setTotalPages(response.data.totalPages);
+      setCurrentPage(response.data.currentPage);
       setLoading(false);
     } catch (err) {
       setError(err.response?.data?.message || 'Error fetching teachers');
@@ -33,9 +37,6 @@ const TeacherList = () => {
       setError(err.response?.data?.message || 'Error deleting teacher');
     }
   };
-
-  const paginatedTeachers = teachers.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
-  const totalPages = Math.ceil(teachers.length / PAGE_SIZE);
 
   if (loading) {
     return (
@@ -68,7 +69,7 @@ const TeacherList = () => {
 
       {/* Mobile View - Card Layout */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:hidden gap-4">
-        {paginatedTeachers.map((teacher) => (
+        {teachers.map((teacher) => (
           <div key={teacher._id} className="bg-white rounded-lg shadow-md p-4 border border-sky-100">
             <div className="font-bold text-lg text-blue-900 mb-2">{teacher.name}</div>
             <div className="text-sm text-gray-600">Age: {teacher.age}</div>
@@ -101,7 +102,7 @@ const TeacherList = () => {
             </tr>
           </thead>
           <tbody>
-            {paginatedTeachers.map((teacher, idx) => (
+            {teachers.map((teacher, idx) => (
               <tr key={teacher._id} className={idx % 2 === 0 ? 'bg-white' : 'bg-sky-50 hover:bg-blue-50 transition'}>
                 <td className="px-6 py-4 whitespace-nowrap text-blue-900 font-medium">{teacher.name}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-blue-800">{teacher.age}</td>
@@ -126,7 +127,7 @@ const TeacherList = () => {
       {totalPages > 1 && (
         <div className="flex justify-center items-center gap-2 mt-6">
           <button
-            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            onClick={() => fetchTeachers(currentPage - 1)}
             disabled={currentPage === 1}
             className="px-3 py-1 rounded bg-sky-200 text-blue-900 disabled:opacity-50"
           >
@@ -134,7 +135,7 @@ const TeacherList = () => {
           </button>
           <span className="font-medium text-blue-900">Page {currentPage} of {totalPages}</span>
           <button
-            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            onClick={() => fetchTeachers(currentPage + 1)}
             disabled={currentPage === totalPages}
             className="px-3 py-1 rounded bg-sky-200 text-blue-900 disabled:opacity-50"
           >

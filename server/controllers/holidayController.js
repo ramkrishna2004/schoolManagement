@@ -19,10 +19,21 @@ exports.createHoliday = asyncHandler(async (req, res, next) => {
 // @route   GET /api/holidays
 // @access  Private
 exports.getHolidays = asyncHandler(async (req, res, next) => {
-  const holidays = await adminScopedQuery(Holiday, req).sort({ date: 1 });
+  // Pagination
+  let page = parseInt(req.query.page, 10) || 1;
+  let limit = parseInt(req.query.limit, 10) || 10;
+  let skip = (page - 1) * limit;
+
+  const baseQuery = adminScopedQuery(Holiday, req);
+  const total = await baseQuery.clone().countDocuments();
+  const holidays = await baseQuery.sort({ date: 1 }).skip(skip).limit(limit);
+
   res.status(200).json({
     success: true,
     count: holidays.length,
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
     data: holidays
   });
 });

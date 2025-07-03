@@ -8,12 +8,20 @@ const { adminScopedQuery, attachAdminId } = require('../utils/adminQueryHelper')
 // @access  Private/Admin
 exports.getTeachers = async (req, res) => {
   try {
-    const { includeInactive } = req.query;
+    const { includeInactive, page = 1, limit = 10 } = req.query;
     const query = includeInactive === 'true' ? {} : { isActive: true };
-    const teachers = await adminScopedQuery(Teacher, req, query).select('-password');
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 10;
+    const skip = (pageNum - 1) * limitNum;
+    const baseQuery = adminScopedQuery(Teacher, req, query).select('-password');
+    const total = await baseQuery.clone().countDocuments();
+    const teachers = await baseQuery.skip(skip).limit(limitNum);
     res.json({
       success: true,
       count: teachers.length,
+      total,
+      currentPage: pageNum,
+      totalPages: Math.ceil(total / limitNum),
       data: teachers
     });
   } catch (error) {

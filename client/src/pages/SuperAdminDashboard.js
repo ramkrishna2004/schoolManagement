@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../config/api';
 import { useAuth } from '../contexts/AuthContext';
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, IconButton, Typography, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, CircularProgress } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -32,9 +32,7 @@ function SuperAdminDashboard() {
     setLoading(true);
     setError('');
     try {
-      const res = await axios.get('/api/superadmin/admins', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
+      const res = await api.get('/api/superadmin/admins');
       setAdmins(res.data.data);
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to fetch admins');
@@ -46,9 +44,7 @@ function SuperAdminDashboard() {
   const handleDelete = async (userId) => {
     if (!window.confirm('Are you sure you want to permanently delete this admin?')) return;
     try {
-      await axios.delete(`/api/superadmin/admins/${userId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
+      await api.delete(`/api/superadmin/admins/${userId}`);
       setAdmins(admins.filter(a => a._id !== userId));
     } catch (err) {
       alert(err.response?.data?.error || 'Failed to delete admin');
@@ -92,15 +88,13 @@ function SuperAdminDashboard() {
     setFormLoading(true);
     try {
       // Call the existing registration endpoint as superadmin
-      await axios.post('/api/auth/register/admin', {
+      await api.post('/api/auth/register/admin', {
         name: form.name,
         email: form.email,
         password: form.password,
         role: 'admin',
         age: form.age,
         extraDetails: { contact: form.contact, department: form.department }
-      }, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       setOpen(false);
       fetchAdmins();

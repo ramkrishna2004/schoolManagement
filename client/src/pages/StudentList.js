@@ -9,6 +9,7 @@ const StudentList = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [showResetModal, setShowResetModal] = useState(false);
   const [resetStudentId, setResetStudentId] = useState(null);
   const [resetPassword, setResetPassword] = useState('');
@@ -17,17 +18,17 @@ const StudentList = () => {
   const [resetSuccess, setResetSuccess] = useState('');
 
   useEffect(() => {
-    fetchStudents();
-  }, []);
+    fetchStudents(currentPage);
+    // eslint-disable-next-line
+  }, [currentPage, searchTerm]);
 
-  useEffect(() => {
-    setCurrentPage(1); // Reset to first page on filter change
-  }, [searchTerm]);
-
-  const fetchStudents = async () => {
+  const fetchStudents = async (page = 1) => {
     try {
-      const response = await api.get('/api/students');
+      setLoading(true);
+      const response = await api.get(`/api/students?page=${page}&limit=${PAGE_SIZE}&search=${encodeURIComponent(searchTerm)}`);
       setStudents(response.data.data);
+      setTotalPages(response.data.totalPages);
+      setCurrentPage(response.data.currentPage);
       setLoading(false);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to fetch students');
@@ -90,15 +91,6 @@ const StudentList = () => {
     }
   };
 
-  const filteredStudents = students.filter(student =>
-    student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    student.rollNumber.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const paginatedStudents = filteredStudents.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
-  const totalPages = Math.ceil(filteredStudents.length / PAGE_SIZE);
-
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -130,7 +122,7 @@ const StudentList = () => {
 
       {/* Mobile View - Card Layout */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:hidden gap-4">
-        {paginatedStudents.map((student) => (
+        {students.map((student) => (
           <div key={student._id} className="bg-white rounded-lg shadow-md p-4 border border-sky-100">
             <div className="font-bold text-lg text-blue-900 mb-2">{student.name}</div>
             <div className="text-sm text-gray-600">Email: {student.email}</div>
@@ -163,7 +155,7 @@ const StudentList = () => {
             </tr>
           </thead>
           <tbody>
-            {paginatedStudents.map((student, idx) => (
+            {students.map((student, idx) => (
               <tr key={student._id} className={idx % 2 === 0 ? 'bg-white' : 'bg-sky-50 hover:bg-blue-50 transition'}>
                 <td className="px-6 py-4 whitespace-nowrap text-blue-900 font-medium">{student.name}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-blue-800">{student.email}</td>
@@ -236,7 +228,7 @@ const StudentList = () => {
       {totalPages > 1 && (
         <div className="flex justify-center items-center gap-2 mt-6">
           <button
-            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            onClick={() => fetchStudents(currentPage - 1)}
             disabled={currentPage === 1}
             className="px-3 py-1 rounded bg-sky-200 text-blue-900 disabled:opacity-50"
           >
@@ -244,7 +236,7 @@ const StudentList = () => {
           </button>
           <span className="font-medium text-blue-900">Page {currentPage} of {totalPages}</span>
           <button
-            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            onClick={() => fetchStudents(currentPage + 1)}
             disabled={currentPage === totalPages}
             className="px-3 py-1 rounded bg-sky-200 text-blue-900 disabled:opacity-50"
           >

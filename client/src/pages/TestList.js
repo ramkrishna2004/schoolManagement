@@ -13,20 +13,24 @@ function TestList() {
   const [searchTerm, setSearchTerm] = useState('');
   const { user } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    fetchTests();
-    setCurrentPage(1); // Reset to first page on filter change
-  }, [searchTerm]);
+    fetchTests(currentPage);
+    // eslint-disable-next-line
+  }, [currentPage, searchTerm]);
 
-  const fetchTests = async () => {
+  const fetchTests = async (page = 1) => {
     try {
-      const response = await api.get('/api/tests', {
+      setLoading(true);
+      const response = await api.get(`/api/tests?page=${page}&limit=${PAGE_SIZE}&search=${encodeURIComponent(searchTerm)}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
       setTests(response.data.data);
+      setTotal(response.data.total);
+      setCurrentPage(response.data.currentPage);
       setLoading(false);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to fetch tests');
@@ -67,7 +71,6 @@ function TestList() {
   );
 
   const paginatedTests = filteredTests.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
-  const totalPages = Math.ceil(filteredTests.length / PAGE_SIZE);
 
   if (loading) {
     return (
@@ -131,7 +134,7 @@ function TestList() {
               </tr>
             </thead>
             <tbody>
-              {paginatedTests.map((test, idx) => (
+              {tests.map((test, idx) => (
                 <tr key={test._id} className={idx % 2 === 0 ? 'bg-white' : 'bg-sky-50 hover:bg-sky-100 transition'}>
                   <td className="px-4 sm:px-8 py-5 whitespace-nowrap text-blue-900 font-semibold text-xs sm:text-base">{test.title}</td>
                   <td className="px-4 sm:px-8 py-5 whitespace-nowrap text-blue-800 text-xs sm:text-base">{test.subject}</td>
@@ -186,7 +189,7 @@ function TestList() {
       {totalPages > 1 && (
         <div className="flex justify-center items-center gap-4 mt-8 border border-sky-200 rounded-xl p-3 bg-sky-50">
           <button
-            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            onClick={() => fetchTests(currentPage - 1)}
             disabled={currentPage === 1}
             className="px-4 py-2 rounded-lg bg-sky-200 text-blue-900 font-semibold hover:bg-sky-300 disabled:opacity-50 transition"
           >
@@ -194,7 +197,7 @@ function TestList() {
           </button>
           <span className="font-semibold text-blue-900 text-lg">Page {currentPage} of {totalPages}</span>
           <button
-            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            onClick={() => fetchTests(currentPage + 1)}
             disabled={currentPage === totalPages}
             className="px-4 py-2 rounded-lg bg-sky-200 text-blue-900 font-semibold hover:bg-sky-300 disabled:opacity-50 transition"
           >

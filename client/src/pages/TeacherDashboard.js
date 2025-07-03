@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import AnnouncementList from '../components/AnnouncementList';
 import { announcementService } from '../services/announcementService';
-import axios from 'axios';
+import api from '../config/api';
 
 function TeacherDashboard() {
   const { user } = useAuth();
@@ -21,10 +21,7 @@ function TeacherDashboard() {
     };
     const fetchClasses = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const res = await axios.get('/api/classes', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const res = await api.get('/api/classes');
             setClasses(res.data.data);
         } catch (error) {
             console.error('Failed to fetch classes', error);
