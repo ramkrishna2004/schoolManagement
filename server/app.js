@@ -40,7 +40,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(cors({
   origin: [
     'http://localhost:3000',
-    'http://192.168.166.91:3000'
+    'http://192.168.166.91:3000',
+    'https://reliable-treacle-d9ca2a.netlify.app',
+    'https://school-managementsystem.onrender.com'
   ],
   credentials: true
 }));
