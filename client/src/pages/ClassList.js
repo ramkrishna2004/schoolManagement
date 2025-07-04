@@ -96,51 +96,53 @@ function ClassList() {
         />
       </div>
       <div className="bg-white shadow-2xl rounded-3xl overflow-hidden border-2 border-sky-200">
-        <table className="min-w-full divide-y divide-sky-200">
-          <thead className="bg-gradient-to-r from-sky-200 to-sky-100">
-            <tr>
-              <th className="px-8 py-4 text-left text-sm font-extrabold text-sky-800 uppercase tracking-widest">Name</th>
-              <th className="px-8 py-4 text-left text-sm font-extrabold text-sky-800 uppercase tracking-widest">Section</th>
-              <th className="px-8 py-4 text-left text-sm font-extrabold text-sky-800 uppercase tracking-widest">Teacher</th>
-              <th className="px-8 py-4 text-left text-sm font-extrabold text-sky-800 uppercase tracking-widest">Students</th>
-              <th className="px-8 py-4 text-left text-sm font-extrabold text-sky-800 uppercase tracking-widest">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedClasses.map((cls, idx) => (
-              <tr key={cls._id} className={idx % 2 === 0 ? 'bg-white' : 'bg-sky-50 hover:bg-sky-100 transition'}>
-                <td className="px-8 py-5 whitespace-nowrap text-blue-900 font-semibold text-base">{cls.name}</td>
-                <td className="px-8 py-5 whitespace-nowrap text-blue-800 text-base">{cls.section}</td>
-                <td className="px-8 py-5 whitespace-nowrap text-blue-800 text-base">{cls.teacher?.name || 'Not Assigned'}</td>
-                <td className="px-8 py-5 whitespace-nowrap text-blue-800 text-base">{cls.students?.length || 0} students</td>
-                <td className="px-8 py-5 whitespace-nowrap text-sm font-medium flex gap-3">
-                  <Link
-                    to={`/classes/${cls._id}`}
-                    className="bg-sky-200 text-sky-900 px-4 py-2 rounded-xl shadow hover:bg-sky-300 font-semibold transition text-base"
-                  >
-                    View
-                  </Link>
-                  {user.role === 'admin' && (
-                    <>
-                      <Link
-                        to={`/classes/${cls._id}/edit`}
-                        className="bg-yellow-200 text-yellow-900 px-4 py-2 rounded-xl shadow hover:bg-yellow-300 font-semibold transition text-base"
-                      >
-                        Edit
-                      </Link>
-                      <button
-                        onClick={() => handleDelete(cls._id)}
-                        className="bg-red-200 text-red-800 px-4 py-2 rounded-xl shadow hover:bg-red-300 font-semibold transition text-base"
-                      >
-                        Delete
-                      </button>
-                    </>
-                  )}
-                </td>
+        <div className="w-full overflow-x-auto">
+          <table className="min-w-full divide-y divide-sky-200">
+            <thead className="bg-gradient-to-r from-sky-200 to-sky-100">
+              <tr>
+                <th className="px-8 py-4 text-left text-sm font-extrabold text-sky-800 uppercase tracking-widest">Name</th>
+                <th className="px-8 py-4 text-left text-sm font-extrabold text-sky-800 uppercase tracking-widest">Section</th>
+                <th className="px-8 py-4 text-left text-sm font-extrabold text-sky-800 uppercase tracking-widest">Teacher</th>
+                <th className="px-8 py-4 text-left text-sm font-extrabold text-sky-800 uppercase tracking-widest">Students</th>
+                <th className="px-8 py-4 text-left text-sm font-extrabold text-sky-800 uppercase tracking-widest">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {paginatedClasses.map((cls, idx) => (
+                <tr key={cls._id} className={idx % 2 === 0 ? 'bg-white' : 'bg-sky-50 hover:bg-sky-100 transition'}>
+                  <td className="px-8 py-5 whitespace-nowrap text-blue-900 font-semibold text-base">{cls.name}</td>
+                  <td className="px-8 py-5 whitespace-nowrap text-blue-800 text-base">{cls.section}</td>
+                  <td className="px-8 py-5 whitespace-nowrap text-blue-800 text-base">{cls.teacher?.name || 'Not Assigned'}</td>
+                  <td className="px-8 py-5 whitespace-nowrap text-blue-800 text-base">{cls.students?.length || 0} students</td>
+                  <td className="px-8 py-5 whitespace-nowrap text-sm font-medium flex gap-3">
+                    <Link
+                      to={`/classes/${cls._id}`}
+                      className="bg-sky-200 text-sky-900 px-4 py-2 rounded-xl shadow hover:bg-sky-300 font-semibold transition text-base"
+                    >
+                      View
+                    </Link>
+                    {user.role === 'admin' && (
+                      <>
+                        <Link
+                          to={`/classes/${cls._id}/edit`}
+                          className="bg-yellow-200 text-yellow-900 px-4 py-2 rounded-xl shadow hover:bg-yellow-300 font-semibold transition text-base"
+                        >
+                          Edit
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(cls._id)}
+                          className="bg-red-200 text-red-800 px-4 py-2 rounded-xl shadow hover:bg-red-300 font-semibold transition text-base"
+                        >
+                          Delete
+                        </button>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
       {/* Pagination Controls */}
       {totalPages > 1 && (

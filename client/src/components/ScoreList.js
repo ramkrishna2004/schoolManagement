@@ -1,27 +1,115 @@
 import React, { useState, useEffect } from 'react';
 import api from '../config/api';
+import { useAuth } from '../contexts/AuthContext';
 
 const PAGE_SIZE = 10;
 
-const ScoreList = ({ onDelete, isTeacher = false }) => {
+const ScoreList = ({ onDelete, isTeacher = false, scores: propScores }) => {
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterBy, setFilterBy] = useState('all'); // all, test, class, student
   const [testTitles, setTestTitles] = useState({});
   const [studentNames, setStudentNames] = useState({});
   const [sortOrder, setSortOrder] = useState('desc'); // 'asc' or 'desc'
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [scores, setScores] = useState([]);
+  const [classId, setClassId] = useState('');
+  const [testId, setTestId] = useState('');
+  const [classes, setClasses] = useState([]);
+  const [tests, setTests] = useState([]);
+  // For students: build unique class list from scores
+  const [studentClassId, setStudentClassId] = useState('');
+  const [studentClasses, setStudentClasses] = useState([]);
 
+  // Fetch filter options on mount
   useEffect(() => {
-    fetchScores(currentPage);
+    async function fetchOptions() {
+      if (user && (user.role === 'admin' || user.role === 'teacher')) {
+        const [classRes, testRes] = await Promise.all([
+          api.get('/api/classes'),
+          api.get('/api/tests'),
+        ]);
+        setClasses(classRes.data.data || []);
+        setTests(testRes.data.data || []);
+      } else if (user && user.role === 'student') {
+        // Build unique class list from propScores
+        const uniqueClasses = [];
+        const seen = new Set();
+        (propScores || []).forEach(score => {
+          if (score.classId && score.classId._id && !seen.has(score.classId._id)) {
+            uniqueClasses.push(score.classId);
+            seen.add(score.classId._id);
+          }
+        });
+        setStudentClasses(uniqueClasses);
+        if (uniqueClasses.length > 0) {
+          setStudentClassId(uniqueClasses[0]._id);
+        }
+        const testRes = await api.get('/api/tests');
+        setTests(testRes.data.data || []);
+      }
+    }
+    fetchOptions();
     // eslint-disable-next-line
-  }, [currentPage, searchTerm, filterBy]);
+  }, [user, propScores]);
 
+  // For students: filter scores by selected class and test
+  const filteredScores = React.useMemo(() => {
+    if (user && user.role === 'student') {
+      let filtered = propScores || [];
+      if (studentClassId) {
+        filtered = filtered.filter(score => score.classId && score.classId._id === studentClassId);
+      }
+      if (testId) {
+        filtered = filtered.filter(score => score.testId && score.testId._id === testId);
+      }
+      if (searchTerm) {
+        filtered = filtered.filter(score => {
+          const testTitle = score.testId?.title || '';
+          const className = score.classId?.className || '';
+          const studentName = score.studentId?.name || '';
+          return (
+            testTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            className.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            studentName.toLowerCase().includes(searchTerm.toLowerCase())
+          );
+        });
+      }
+      return filtered;
+    }
+    // admin/teacher logic unchanged
+    let filtered = scores;
+    if (searchTerm) {
+      filtered = filtered.filter(score => {
+        const testTitle = score.testId?.title || '';
+        const className = score.classId?.className || '';
+        const studentName = score.studentId?.name || '';
+        return (
+          testTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          className.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          studentName.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      });
+    }
+    return filtered;
+  }, [user, propScores, studentClassId, testId, searchTerm, scores]);
+
+  // When any filter changes, reset to page 1
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [classId, testId, searchTerm]);
+
+  // Fetch scores from backend with filters
   const fetchScores = async (page = 1) => {
     try {
-      // You may want to add filter/search params here
-      const response = await api.get(`/api/scores?page=${page}&limit=${PAGE_SIZE}`);
+      const params = {
+        page,
+        limit: PAGE_SIZE,
+        ...(searchTerm ? { search: searchTerm } : {}),
+        ...(classId ? { classId } : {}),
+        ...(testId ? { testId } : {})
+      };
+      const response = await api.get('/api/scores', { params });
       setScores(response.data.data);
       setTotalPages(response.data.totalPages);
       setCurrentPage(response.data.currentPage);
@@ -29,6 +117,14 @@ const ScoreList = ({ onDelete, isTeacher = false }) => {
       console.error('Failed to fetch scores:', err);
     }
   };
+
+  // useEffect will re-run fetchScores when currentPage or any filter changes
+  useEffect(() => {
+    if (user && (user.role === 'admin' || user.role === 'teacher')) {
+      fetchScores(currentPage);
+    }
+    // eslint-disable-next-line
+  }, [currentPage, classId, testId, searchTerm, user]);
 
   useEffect(() => {
     // Find all unique testIds that are missing a title
@@ -74,26 +170,6 @@ const ScoreList = ({ onDelete, isTeacher = false }) => {
     // eslint-disable-next-line
   }, [scores]);
 
-  const filteredScores = scores.filter(score => {
-    const matchesSearch = 
-      (score.testId?.title || testTitles[score.testId?._id || score.testId] || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (score.classId?.className || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (score.studentId?.name || studentNames[score.studentId?._id || score.studentId] || '').toLowerCase().includes(searchTerm.toLowerCase());
-
-    if (filterBy === 'all') return matchesSearch;
-    if (filterBy === 'test') return matchesSearch && score.testId;
-    if (filterBy === 'class') return matchesSearch && score.classId;
-    if (filterBy === 'student') return matchesSearch && score.studentId;
-    
-    return matchesSearch;
-  });
-
-  // Sort by score
-  const sortedScores = [...filteredScores].sort((a, b) => {
-    if (sortOrder === 'asc') return a.score - b.score;
-    return b.score - a.score;
-  });
-
   return (
     <div className="bg-white shadow-lg rounded-2xl border border-sky-100">
       <div className="p-4 border-b border-sky-200 bg-sky-50 rounded-t-2xl">
@@ -104,15 +180,40 @@ const ScoreList = ({ onDelete, isTeacher = false }) => {
             </h2>
           </div>
           <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-3">
+            {/* Student class dropdown */}
+            {user && user.role === 'student' && studentClasses.length > 1 && (
+              <select
+                value={studentClassId}
+                onChange={e => setStudentClassId(e.target.value)}
+                className="block w-full md:w-40 px-3 py-2 border border-sky-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-sky-400 sm:text-sm bg-white text-sky-800 hover:border-sky-300 transition-colors duration-200 cursor-pointer"
+              >
+                {studentClasses.map(cls => (
+                  <option key={cls._id} value={cls._id}>{cls.className}</option>
+                ))}
+              </select>
+            )}
+            {/* Admin/Teacher class dropdown */}
+            {user && (user.role === 'admin' || user.role === 'teacher') && (
+              <select
+                value={classId}
+                onChange={e => setClassId(e.target.value)}
+                className="block w-full md:w-40 px-3 py-2 border border-sky-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-sky-400 sm:text-sm bg-white text-sky-800 hover:border-sky-300 transition-colors duration-200 cursor-pointer"
+              >
+                <option value="">All Classes</option>
+                {classes.map(cls => (
+                  <option key={cls._id} value={cls._id}>{cls.className}</option>
+                ))}
+              </select>
+            )}
             <select
-              value={filterBy}
-              onChange={(e) => setFilterBy(e.target.value)}
+              value={testId}
+              onChange={e => setTestId(e.target.value)}
               className="block w-full md:w-40 px-3 py-2 border border-sky-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-sky-400 sm:text-sm bg-white text-sky-800 hover:border-sky-300 transition-colors duration-200 cursor-pointer"
             >
-              <option value="all" className="text-sky-800 bg-white hover:bg-sky-50">All</option>
-              <option value="test" className="text-sky-800 bg-white hover:bg-sky-50">By Test</option>
-              <option value="class" className="text-sky-800 bg-white hover:bg-sky-50">By Class</option>
-              <option value="student" className="text-sky-800 bg-white hover:bg-sky-50">By Student</option>
+              <option value="">All Tests</option>
+              {tests.map(test => (
+                <option key={test._id} value={test._id}>{test.title}</option>
+              ))}
             </select>
             <input
               type="text"
@@ -163,7 +264,7 @@ const ScoreList = ({ onDelete, isTeacher = false }) => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-sky-50">
-            {sortedScores.map((score, index) => (
+            {filteredScores.map((score, index) => (
               <tr key={score._id} className="hover:bg-blue-50 transition">
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {index + 1}

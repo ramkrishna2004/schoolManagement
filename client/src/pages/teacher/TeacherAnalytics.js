@@ -59,29 +59,129 @@ const TeacherAnalytics = () => {
     } : null;
 
     return (
-        <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Class Test Analytics</h1>
+        <div className="container mx-auto p-4 max-w-4xl">
+            <h1 className="text-3xl font-extrabold mb-8 text-gray-800 text-center">Class Test Analytics</h1>
             {classData && (
-                <div className="bg-white p-4 rounded-lg shadow mb-4">
-                    <h2 className="text-xl font-semibold mb-2">Class Average vs Student Averages</h2>
-                    <AnalyticsChart type="bar" data={barChartData} />
+                <div className="bg-white p-6 rounded-2xl shadow-lg mb-8 flex flex-col items-center">
+                    <h2 className="text-2xl font-bold mb-4 text-gray-700 text-center">Class Average vs Student Averages</h2>
+                    <div className="w-full min-h-[320px] flex items-center justify-center">
+                        <AnalyticsChart 
+                            type="bar" 
+                            data={barChartData} 
+                            height={350}
+                            options={{
+                                plugins: {
+                                    legend: { position: 'bottom', labels: { font: { size: 16 } } },
+                                },
+                                layout: { padding: 24 },
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 0, font: { size: 14 } } },
+                                    y: { ticks: { font: { size: 14 } } }
+                                }
+                            }}
+                        />
+                    </div>
                 </div>
             )}
             
-            <div className="bg-white p-4 rounded-lg shadow">
-                <h2 className="text-xl font-semibold mb-2">Individual Student Performance</h2>
-                <div className="flex flex-wrap gap-2">
+            <div className="bg-white p-6 rounded-2xl shadow-lg flex flex-col items-center">
+                <h2 className="text-2xl font-bold mb-4 text-gray-700 text-center">Individual Student Performance</h2>
+                <div className="flex flex-wrap gap-3 justify-center mb-4">
                     {classData && classData.studentAverages.map(student => (
                         <button key={student.studentId} onClick={() => setSelectedStudent(student)}
-                            className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded">
+                            className={`px-5 py-2 rounded-lg font-semibold border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm
+                                ${selectedStudent && selectedStudent.studentId === student.studentId
+                                    ? 'bg-blue-600 text-white border-blue-700 shadow-md'
+                                    : 'bg-gray-100 text-gray-800 border-gray-300 hover:bg-blue-100'}`}
+                            aria-pressed={selectedStudent && selectedStudent.studentId === student.studentId}
+                        >
                             {student.studentName}
                         </button>
                     ))}
                 </div>
                 {selectedStudent && studentChartData && (
-                     <div className="mt-4">
-                        <h3 className="text-lg font-semibold">Score trend for {selectedStudent.studentName}</h3>
-                        <AnalyticsChart type="line" data={studentChartData} />
+                    <div className="mt-6 w-full min-h-[280px] flex flex-col items-center">
+                        <h3 className="text-lg font-semibold mb-2 text-sky-300">Score trend for <span className="text-sky-600">{selectedStudent.studentName}</span></h3>
+                        <div className="w-full">
+                            <AnalyticsChart
+                                type="line"
+                                data={studentChartData}
+                                height={340}
+                                options={{
+                                    plugins: {
+                                        legend: {
+                                            position: 'bottom',
+                                            labels: { font: { size: 15 }, color: '#0ea5e9' }
+                                        },
+                                        tooltip: {
+                                            backgroundColor: '#0ea5e9',
+                                            titleColor: '#fff',
+                                            bodyColor: '#fff',
+                                            borderColor: '#38bdf8',
+                                            borderWidth: 1,
+                                            padding: 12,
+                                            cornerRadius: 8,
+                                        }
+                                    },
+                                    elements: {
+                                        line: {
+                                            tension: 0,
+                                            borderWidth: 2,
+                                            borderColor: '#0ea5e9',
+                                            fill: 'start',
+                                            backgroundColor: (context) => {
+                                                const chart = context.chart;
+                                                const {ctx, chartArea} = chart;
+                                                if (!chartArea) return null;
+                                                const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                                                gradient.addColorStop(0, 'rgba(14,165,233,0.18)');
+                                                gradient.addColorStop(1, 'rgba(14,165,233,0)');
+                                                return gradient;
+                                            },
+                                            hoverBorderColor: '#38bdf8',
+                                            hoverBorderWidth: 5,
+                                        },
+                                        point: {
+                                            radius: studentChartData.labels && studentChartData.labels.length > 25 ? 0 : 5,
+                                            backgroundColor: '#fff',
+                                            borderColor: '#0ea5e9',
+                                            borderWidth: 2,
+                                            hoverRadius: 5,
+                                            hoverBackgroundColor: '#0ea5e9',
+                                            hoverBorderColor: '#0ea5e9',
+                                            hoverBorderWidth: 5,
+                                            pointStyle: 'circle',
+                                        }
+                                    },
+                                    layout: { padding: 20 },
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    interaction: {
+                                        mode: 'nearest',
+                                        intersect: false,
+                                    },
+                                    scales: {
+                                        x: {
+                                            ticks: {
+                                                font: { size: 13 },
+                                                color: 'black',
+                                                autoSkip: true,
+                                                maxRotation: 30,
+                                                minRotation: 0,
+                                                maxTicksLimit: 12,
+                                            },
+                                            grid: { color: 'rgba(14,165,233,0.08)' }
+                                        },
+                                        y: {
+                                            ticks: { font: { size: 13 }, color: 'black' },
+                                            grid: { color: 'rgba(14,165,233,0.08)' }
+                                        }
+                                    }
+                                }}
+                            />
+                        </div>
                     </div>
                 )}
             </div>

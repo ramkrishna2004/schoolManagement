@@ -4,18 +4,12 @@ import api from '../config/api';
 export const materialService = {
   // Get all materials with filters
   getMaterials: async (params = {}) => {
-    const queryParams = new URLSearchParams();
-    Object.keys(params).forEach(key => {
-      if (params[key] !== undefined && params[key] !== '') {
-        queryParams.append(key, params[key]);
-      }
-    });
-    
     const token = localStorage.getItem('token');
     const response = await api.get('/api/materials', {
       headers: {
         Authorization: `Bearer ${token}`
-      }
+      },
+      params // Pass filters as query params
     });
     return response.data;
   },

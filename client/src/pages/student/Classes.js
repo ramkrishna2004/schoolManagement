@@ -72,30 +72,32 @@ function Classes() {
 
       <div className="mt-8">
         <div className="shadow-2xl rounded-3xl border-2 border-sky-200 overflow-hidden">
-          <table className="min-w-full divide-y divide-sky-200">
-            <thead className="bg-gradient-to-r from-sky-200 to-sky-100">
-              <tr>
-                <th className="px-8 py-4 text-left text-sm font-extrabold text-sky-800 uppercase tracking-widest">Class Name</th>
-                <th className="px-8 py-4 text-left text-sm font-extrabold text-sky-800 uppercase tracking-widest">Subject</th>
-                <th className="px-8 py-4 text-left text-sm font-extrabold text-sky-800 uppercase tracking-widest">Teacher</th>
-              </tr>
-            </thead>
-            <tbody>
-              {classes.length === 0 ? (
+          <div className="w-full overflow-x-auto">
+            <table className="min-w-full divide-y divide-sky-200">
+              <thead className="bg-gradient-to-r from-sky-200 to-sky-100">
                 <tr>
-                  <td colSpan="3" className="px-8 py-6 text-center text-base text-gray-500">No classes found</td>
+                  <th className="px-8 py-4 text-left text-sm font-extrabold text-sky-800 uppercase tracking-widest">Class Name</th>
+                  <th className="px-8 py-4 text-left text-sm font-extrabold text-sky-800 uppercase tracking-widest">Subject</th>
+                  <th className="px-8 py-4 text-left text-sm font-extrabold text-sky-800 uppercase tracking-widest">Teacher</th>
                 </tr>
-              ) : (
-                classes.map((classItem, idx) => (
-                  <tr key={classItem._id} className={idx % 2 === 0 ? 'bg-white' : 'bg-sky-50 hover:bg-sky-100 transition'}>
-                    <td className="px-8 py-5 whitespace-nowrap text-blue-900 font-semibold text-base">{classItem.className}</td>
-                    <td className="px-8 py-5 whitespace-nowrap text-blue-800 text-base">{classItem.subjectName}</td>
-                    <td className="px-8 py-5 whitespace-nowrap text-blue-700 text-base">{classItem.teacherId?.name || 'Not assigned'}</td>
+              </thead>
+              <tbody>
+                {classes.length === 0 ? (
+                  <tr>
+                    <td colSpan="3" className="px-8 py-6 text-center text-base text-gray-500">No classes found</td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  classes.map((classItem, idx) => (
+                    <tr key={classItem._id} className={idx % 2 === 0 ? 'bg-white' : 'bg-sky-50 hover:bg-sky-100 transition'}>
+                      <td className="px-8 py-5 whitespace-nowrap text-blue-900 font-semibold text-base">{classItem.className}</td>
+                      <td className="px-8 py-5 whitespace-nowrap text-blue-800 text-base">{classItem.subjectName}</td>
+                      <td className="px-8 py-5 whitespace-nowrap text-blue-700 text-base">{classItem.teacherId?.name || 'Not assigned'}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

@@ -6,9 +6,6 @@ import api from '../../config/api';
 
 const Scores = () => {
   const [allScores, setAllScores] = useState([]);
-  const [filteredScores, setFilteredScores] = useState([]);
-  const [classes, setClasses] = useState([]);
-  const [selectedClass, setSelectedClass] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { token } = useAuth();
@@ -17,19 +14,8 @@ const Scores = () => {
     const fetchInitialData = async () => {
       try {
         setLoading(true);
-        const [classRes, scoreRes] = await Promise.all([
-          api.get('/api/students/enrolled-classes'),
-          api.get('/api/scores')
-        ]);
-        
-        const fetchedClasses = classRes.data.data || [];
-        setClasses(fetchedClasses);
+        const scoreRes = await api.get('/api/scores');
         setAllScores(scoreRes.data.data || []);
-
-        if (fetchedClasses.length > 0) {
-          setSelectedClass(fetchedClasses[0]._id);
-        }
-        
         setError(null);
       } catch (err) {
         setError(err.response?.data?.error || 'Failed to fetch data');
@@ -42,14 +28,6 @@ const Scores = () => {
       fetchInitialData();
     }
   }, [token]);
-
-  useEffect(() => {
-    if (selectedClass) {
-      setFilteredScores(allScores.filter(score => score.classId?._id === selectedClass));
-    } else {
-      setFilteredScores(allScores);
-    }
-  }, [selectedClass, allScores]);
 
   if (loading) {
     return (
@@ -68,18 +46,6 @@ const Scores = () => {
             View your test scores and performance
           </p>
         </div>
-        <div className="mt-4 md:mt-0">
-          <label className="font-semibold text-gray-700 mr-2">Filter by Class:</label>
-          <select 
-            value={selectedClass} 
-            onChange={e => setSelectedClass(e.target.value)}
-            className="border rounded p-2"
-          >
-            {classes.map(cls => (
-              <option key={cls._id} value={cls._id}>{cls.className}</option>
-            ))}
-          </select>
-        </div>
       </div>
       
       {error && (
@@ -89,7 +55,7 @@ const Scores = () => {
       )}
 
       <ScoreList
-        scores={filteredScores}
+        scores={allScores}
         isTeacher={false}
       />
     </div>
