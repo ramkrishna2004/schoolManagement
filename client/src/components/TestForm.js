@@ -118,7 +118,6 @@ function TestForm({ onSubmit, onCancel, initialData }) {
                 value={formData.testTitle}
                 onChange={handleChange}
                 required
-                placeholder="Enter test title"
               />
             </div>
             <div className="sm:col-span-3">
@@ -146,7 +145,6 @@ function TestForm({ onSubmit, onCancel, initialData }) {
                 value={formData.subjectName}
                 onChange={handleChange}
                 required
-                placeholder="Enter subject name"
               />
             </div>
             <div className="sm:col-span-3">

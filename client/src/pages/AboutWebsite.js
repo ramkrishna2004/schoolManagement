@@ -1,174 +1,282 @@
 import React from 'react';
-import { Box, Typography, Chip, Divider, Button, Avatar } from '@mui/material';
-import { School, MenuBook, Assignment, Announcement, People, Class as ClassIcon, MonetizationOn, Hotel, Assessment, MoreHoriz, Update, Analytics, MobileFriendly, NotificationsActive, Palette, AdminPanelSettings } from '@mui/icons-material';
+import { Box, Typography, Chip, Button, Avatar, Container, Grid, Card} from '@mui/material';
+import { 
+  School, MenuBook, Assignment, Announcement, People, Class as ClassIcon, 
+  MonetizationOn, Hotel, Assessment,  Analytics, 
+  MobileFriendly, Palette,
+  TrendingUp, Security, Speed, CloudSync, Support, RocketLaunch
+} from '@mui/icons-material';
 import { motion } from 'framer-motion';
-import { Timeline, TimelineItem, TimelineSeparator, TimelineConnector, TimelineContent, TimelineDot } from '@mui/lab';
 
 const currentServices = [
-  { icon: <School sx={{ color: '#0284c7' }} />, title: 'Student Management', desc: 'Enroll, track, and manage students with ease.' },
-  { icon: <People sx={{ color: '#0284c7' }} />, title: 'Teacher Management', desc: 'Manage teacher profiles, assignments, and schedules.' },
-  { icon: <ClassIcon sx={{ color: '#0284c7' }} />, title: 'Class Scheduling', desc: 'Organize classes, timetables, and attendance.' },
-  { icon: <Assignment sx={{ color: '#0284c7' }} />, title: 'Test Management', desc: 'Create, assign, and analyze tests and results.' },
-  { icon: <MenuBook sx={{ color: '#0284c7' }} />, title: 'Materials', desc: 'Upload and share learning materials and resources.' },
-  { icon: <Announcement sx={{ color: '#0284c7' }} />, title: 'Announcements', desc: 'Create and manage school-wide announcements.' },
+  { 
+    icon: <School sx={{ color: '#0ea5e9', fontSize: 40 }} />, 
+    title: 'Student Management', 
+    desc: 'Comprehensive student enrollment, tracking, and management system with advanced analytics.' 
+  },
+  { 
+    icon: <People sx={{ color: '#0ea5e9', fontSize: 40 }} />, 
+    title: 'Teacher Management', 
+    desc: 'Complete teacher profile management, assignment tracking, and schedule optimization.' 
+  },
+  { 
+    icon: <ClassIcon sx={{ color: '#0ea5e9', fontSize: 40 }} />, 
+    title: 'Smart Scheduling', 
+    desc: 'AI-powered class scheduling with conflict resolution and optimal resource allocation.' 
+  },
+  { 
+    icon: <Assignment sx={{ color: '#0ea5e9', fontSize: 40 }} />, 
+    title: 'Advanced Testing', 
+    desc: 'Create, distribute, and analyze tests with real-time performance tracking.' 
+  },
+  { 
+    icon: <MenuBook sx={{ color: '#0ea5e9', fontSize: 40 }} />, 
+    title: 'Digital Library', 
+    desc: 'Cloud-based learning materials with version control and collaborative features.' 
+  },
+  { 
+    icon: <Announcement sx={{ color: '#0ea5e9', fontSize: 40 }} />, 
+    title: 'Smart Notifications', 
+    desc: 'Intelligent announcement system with targeted delivery and engagement tracking.' 
+  },
 ];
 
 const whatsNew = [
-  { icon: <Analytics sx={{ color: '#0284c7' }} />, title: 'Advanced Analytics Dashboard', desc: 'Modern, interactive analytics for admins and teachers, including class and student trends.' },
-  { icon: <MobileFriendly sx={{ color: '#0284c7' }} />, title: 'Mobile-First UI', desc: 'Fully responsive, professional design for all devices.' },
-  { icon: <Palette sx={{ color: '#0284c7' }} />, title: 'Glassmorphism & Gradients', desc: 'Beautiful, modern look with glassy cards and animated gradients.' },
-  { icon: <NotificationsActive sx={{ color: '#0284c7' }} />, title: 'Improved Notifications', desc: 'Elegant, animated notifications and announcement cards.' },
-  { icon: <Assignment sx={{ color: '#0284c7' }} />, title: 'Animated Inputs', desc: 'All forms use animated, interactive input fields for a consistent experience.' },
-  { icon: <AdminPanelSettings sx={{ color: '#0284c7' }} />, title: 'Role-Based Dashboards', desc: 'Distinct, modern dashboards for Admin, Teacher, and Student roles.' },
+  { 
+    icon: <Analytics sx={{ color: '#0ea5e9', fontSize: 40 }} />, 
+    title: 'AI-Powered Analytics', 
+    desc: 'Machine learning insights for student performance, attendance patterns, and resource optimization.' 
+  },
+  { 
+    icon: <MobileFriendly sx={{ color: '#0ea5e9', fontSize: 40 }} />, 
+    title: 'Progressive Web App', 
+    desc: 'Native app-like experience with offline capabilities and push notifications.' 
+  },
+  { 
+    icon: <Palette sx={{ color: '#0ea5e9', fontSize: 40 }} />, 
+    title: 'Neumorphic Design', 
+    desc: 'Modern soft UI with depth, shadows, and intuitive user interactions.' 
+  },
+  { 
+    icon: <Security sx={{ color: '#0ea5e9', fontSize: 40 }} />, 
+    title: 'Enhanced Security', 
+    desc: 'Multi-factor authentication, role-based access, and end-to-end encryption.' 
+  },
+  { 
+    icon: <Speed sx={{ color: '#0ea5e9', fontSize: 40 }} />, 
+    title: 'Performance Boost', 
+    desc: 'Optimized loading speeds with lazy loading and intelligent caching.' 
+  },
+  { 
+    icon: <CloudSync sx={{ color: '#0ea5e9', fontSize: 40 }} />, 
+    title: 'Real-time Sync', 
+    desc: 'Instant data synchronization across all devices and users.' 
+  },
 ];
 
 const futureServices = [
-  { icon: <MonetizationOn sx={{ color: '#0284c7' }} />, title: 'Fee Management', desc: 'Automate and track student fee payments and dues.' },
-  { icon: <Hotel sx={{ color: '#0284c7' }} />, title: 'Hostel Management', desc: 'Manage hostel rooms, allocations, and student stays.' },
-  { icon: <Assessment sx={{ color: '#0284c7' }} />, title: 'Result Management', desc: 'Publish and analyze student results and report cards.' },
-  { icon: <MoreHoriz sx={{ color: '#0284c7' }} />, title: 'More Modules', desc: 'Additional features for holistic school management.' },
+  { 
+    icon: <MonetizationOn sx={{ color: '#0ea5e9', fontSize: 40 }} />, 
+    title: 'Financial Management', 
+    desc: 'Complete fee management with payment gateways, invoicing, and financial reporting.' 
+  },
+  { 
+    icon: <Hotel sx={{ color: '#0ea5e9', fontSize: 40 }} />, 
+    title: 'Campus Management', 
+    desc: 'Hostel allocation, facility booking, and campus-wide resource management.' 
+  },
+  { 
+    icon: <Assessment sx={{ color: '#0ea5e9', fontSize: 40 }} />, 
+    title: 'Advanced Reporting', 
+    desc: 'Comprehensive reporting with custom dashboards and automated insights.' 
+  },
+  { 
+    icon: <Support sx={{ color: '#0ea5e9', fontSize: 40 }} />, 
+    title: '24/7 Support', 
+    desc: 'Round-the-clock technical support with live chat and video assistance.' 
+  },
 ];
 
-function TimelineStep({ icon, title, desc, idx }) {
-  return (
-    <TimelineItem>
-      <TimelineSeparator>
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          whileInView={{ scale: 1, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: idx * 0.15 }}
-        >
-          <TimelineDot
-            sx={{
-              background: '#0284c7',
-              boxShadow: '0 0 0 6px #e0f2fe',
-              width: 56,
-              height: 56,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 32,
-              transition: 'transform 0.3s ease',
-              '&:hover': { transform: 'scale(1.1)' },
-            }}
-          >
-            <motion.div
-              whileHover={{ scale: 1.15, rotate: 15 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: 'spring', stiffness: 300 }}
-              style={{ display: 'flex', alignItems: 'center' }}
-            >
-              {icon}
-            </motion.div>
-          </TimelineDot>
-        </motion.div>
-        <TimelineConnector sx={{ background: '#7dd3fc', minHeight: 40 }} />
-      </TimelineSeparator>
-      <TimelineContent sx={{ py: 2, px: 1 }}>
-        <motion.div
-          initial={{ opacity: 0, x: 50 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: idx * 0.15 + 0.1 }}
-        >
-          <Box
-            sx={{
-              background: 'rgba(255,255,255,0.85)',
-              borderRadius: 4,
-              boxShadow: '0 4px 24px 0 #7dd3fc33',
-              border: '1.5px solid #bae6fd',
-              px: { xs: 2, md: 4 },
-              py: { xs: 2, md: 3 },
-              mb: 2,
-              maxWidth: 420,
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-              '&:hover': {
-                transform: 'translateY(-4px)',
-                boxShadow: '0 8px 32px 0 #7dd3fc66',
-              },
-            }}
-          >
-            <Typography variant="h6" fontWeight={700} color="#0284c7" mb={0.5}>
-              {title}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {desc}
-            </Typography>
-          </Box>
-        </motion.div>
-      </TimelineContent>
-    </TimelineItem>
-  );
-}
+const stats = [
+  { number: '500+', label: 'Schools Trust Us', icon: <School /> },
+  { number: '50K+', label: 'Students Managed', icon: <People /> },
+  { number: '99.9%', label: 'Uptime Guarantee', icon: <TrendingUp /> },
+  { number: '24/7', label: 'Support Available', icon: <Support /> },
+];
 
-function MissionBlock() {
+function StatCard({ stat, index }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.8 }}
+      transition={{ duration: 0.6, delay: index * 0.1 }}
     >
-      <Box
+      <Card
         sx={{
-          background: 'linear-gradient(120deg, #e0f2fe 0%, #bae6fd 100%)',
-          borderRadius: 6,
-          boxShadow: '0 4px 32px 0 #7dd3fc33',
-          px: { xs: 2, md: 8 },
-          py: { xs: 5, md: 7 },
-          my: { xs: 6, md: 10 },
-          mx: 'auto',
-          maxWidth: 800,
+          background: 'rgba(255, 255, 255, 0.9)',
+          backdropFilter: 'blur(20px)',
+          borderRadius: 4,
+          boxShadow: '0 8px 32px rgba(14, 165, 233, 0.15)',
+          border: '1px solid rgba(14, 165, 233, 0.2)',
+          p: 3,
           textAlign: 'center',
-          position: 'relative',
-          zIndex: 2,
-          transition: 'transform 0.3s ease',
-          '&:hover': { transform: 'scale(1.02)' },
+          transition: 'all 0.3s ease',
+          '&:hover': {
+            transform: 'translateY(-8px)',
+            boxShadow: '0 16px 48px rgba(14, 165, 233, 0.25)',
+          },
         }}
       >
-        <Avatar
-          src="https://cdn.pixabay.com/photo/2017/01/31/13/14/avatar-2026510_1280.png"
-          alt="Founder"
-          sx={{ width: 80, height: 80, mx: 'auto', mb: 2, boxShadow: 3, border: '3px solid #bae6fd' }}
-        />
-        <Typography variant="h5" fontWeight={700} color="#0284c7" mb={2}>
-          Our Mission
+        <Box sx={{ color: '#0ea5e9', mb: 2 }}>
+          {stat.icon}
+        </Box>
+        <Typography variant="h3" fontWeight={800} color="#0ea5e9" mb={1}>
+          {stat.number}
         </Typography>
-        <Typography variant="h6" color="text.secondary" mb={2}>
-          &quot;To empower every school with seamless, modern, and joyful management tools—so educators can focus on what matters most: inspiring the next generation.&quot;
+        <Typography variant="body2" color="text.secondary" fontWeight={500}>
+          {stat.label}
         </Typography>
-        <Typography variant="subtitle2" color="#0ea5e9" fontWeight={600}>
-          — The SkyNext Team
-        </Typography>
-      </Box>
+      </Card>
     </motion.div>
   );
 }
 
-function FloatingIcons() {
+function FeatureCard({ feature, index }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, delay: index * 0.1 }}
+    >
+      <Card
+        sx={{
+          background: 'rgba(255, 255, 255, 0.9)',
+          backdropFilter: 'blur(20px)',
+          borderRadius: 4,
+          boxShadow: '0 8px 32px rgba(14, 165, 233, 0.15)',
+          border: '1px solid rgba(14, 165, 233, 0.2)',
+          p: 4,
+          height: '100%',
+          transition: 'all 0.3s ease',
+          '&:hover': {
+            transform: 'translateY(-8px)',
+            boxShadow: '0 16px 48px rgba(14, 165, 233, 0.25)',
+          },
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+          <Box
+            sx={{
+              background: 'linear-gradient(135deg, #0ea5e9, #38bdf8)',
+              borderRadius: 3,
+              p: 1.5,
+              mr: 2,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            {feature.icon}
+          </Box>
+          <Typography variant="h6" fontWeight={700} color="#0ea5e9">
+            {feature.title}
+          </Typography>
+        </Box>
+        <Typography variant="body2" color="text.secondary" lineHeight={1.6}>
+          {feature.desc}
+        </Typography>
+      </Card>
+    </motion.div>
+  );
+}
+
+function FloatingElements() {
   return (
     <>
       <motion.div
-        style={{ position: 'fixed', left: 20, top: 150, zIndex: 0 }}
-        animate={{ y: [0, 40, 0], scale: [1, 1.12, 1] }}
-        transition={{ repeat: Infinity, duration: 15, ease: 'easeInOut' }}
+        style={{
+          position: 'absolute',
+          top: '10%',
+          left: '5%',
+          zIndex: 0,
+        }}
+        animate={{
+          y: [0, -30, 0],
+          rotate: [0, 5, 0],
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
       >
-        <School sx={{ fontSize: 50, color: '#7dd3fc', opacity: 0.2 }} />
+        <Box
+          sx={{
+            width: 100,
+            height: 100,
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(56, 189, 248, 0.1))',
+            border: '2px solid rgba(14, 165, 233, 0.2)',
+          }}
+        />
       </motion.div>
+      
       <motion.div
-        style={{ position: 'fixed', right: 30, top: 300, zIndex: 0 }}
-        animate={{ y: [0, -30, 0], scale: [1, 1.1, 1] }}
-        transition={{ repeat: Infinity, duration: 17, ease: 'easeInOut' }}
+        style={{
+          position: 'absolute',
+          top: '20%',
+          right: '10%',
+          zIndex: 0,
+        }}
+        animate={{
+          y: [0, 20, 0],
+          rotate: [0, -5, 0],
+        }}
+        transition={{
+          duration: 10,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
       >
-        <Assessment sx={{ fontSize: 46, color: '#bae6fd', opacity: 0.18 }} />
+        <Box
+          sx={{
+            width: 80,
+            height: 80,
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(14, 165, 233, 0.1))',
+            border: '2px solid rgba(56, 189, 248, 0.2)',
+          }}
+        />
       </motion.div>
+      
       <motion.div
-        style={{ position: 'fixed', left: 50, bottom: 100, zIndex: 0 }}
-        animate={{ y: [0, 20, 0], scale: [1, 1.08, 1] }}
-        transition={{ repeat: Infinity, duration: 13, ease: 'easeInOut' }}
+        style={{
+          position: 'absolute',
+          bottom: '20%',
+          left: '15%',
+          zIndex: 0,
+        }}
+        animate={{
+          y: [0, -15, 0],
+          rotate: [0, 8, 0],
+        }}
+        transition={{
+          duration: 12,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
       >
-        <MenuBook sx={{ fontSize: 42, color: '#0ea5e9', opacity: 0.15 }} />
+        <Box
+          sx={{
+            width: 60,
+            height: 60,
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(56, 189, 248, 0.1))',
+            border: '2px solid rgba(14, 165, 233, 0.2)',
+          }}
+        />
       </motion.div>
     </>
   );
@@ -179,83 +287,30 @@ export default function AboutWebsite() {
     <Box
       sx={{
         minHeight: '100vh',
-        width: '100vw',
-        p: 0,
-        m: 0,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
+        background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #bae6fd 100%)',
         position: 'relative',
         overflow: 'hidden',
-        background: 'linear-gradient(120deg, #e0f2fe 0%, #bae6fd 100%)',
       }}
     >
-      <FloatingIcons />
+      <FloatingElements />
+      
       {/* Hero Section */}
       <Box
         sx={{
-          width: '100vw',
-          minHeight: { xs: '80vh', md: '100vh' },
+          minHeight: '100vh',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           position: 'relative',
-          overflow: 'hidden',
-      }}
-    >
-      <motion.div
-          initial={{ backgroundPosition: '0% 50%' }}
-          animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
-          transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100%',
-            zIndex: 0,
-            background: 'linear-gradient(120deg, #0284c7 0%, #0ea5e9 50%, #7dd3fc 100%)',
-            backgroundSize: '200% 200%',
-            opacity: 0.9,
-          }}
-        />
-        <motion.svg
-          width="300"
-          height="300"
-          viewBox="0 0 300 300"
-          fill="none"
-          style={{ position: 'absolute', top: 50, left: 50, zIndex: 1 }}
-          animate={{ y: [0, 25, 0], rotate: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 16, ease: 'easeInOut' }}
+          px: { xs: 2, sm: 4, md: 6 },
+        }}
       >
-          <ellipse cx="150" cy="150" rx="100" ry="70" fill="#fff" opacity="0.1" />
-        </motion.svg>
-        <motion.svg
-          width="200"
-          height="200"
-          viewBox="0 0 200 200"
-          fill="none"
-          style={{ position: 'absolute', bottom: 50, right: 70, zIndex: 1 }}
-          animate={{ y: [0, -25, 0], rotate: [0, -10, 0] }}
-          transition={{ repeat: Infinity, duration: 14, ease: 'easeInOut' }}
-        >
-          <ellipse cx="100" cy="100" rx="80" ry="50" fill="#fff" opacity="0.12" />
-        </motion.svg>
+        <Container maxWidth="lg">
         <Box
           sx={{
+              textAlign: 'center',
+              position: 'relative',
             zIndex: 2,
-            px: { xs: 2, md: 8 },
-            py: { xs: 6, md: 8 },
-            borderRadius: 8,
-            background: 'rgba(255,255,255,0.2)',
-            boxShadow: '0 8px 40px 0 rgba(56,189,248,0.2)',
-            backdropFilter: 'blur(20px)',
-            border: '1.5px solid #bae6fd',
-            textAlign: 'center',
-            maxWidth: 700,
-            mx: 'auto',
-            transition: 'transform 0.3s ease',
-            '&:hover': { transform: 'scale(1.02)' },
           }}
         >
               <motion.div
@@ -265,273 +320,378 @@ export default function AboutWebsite() {
               >
             <Typography
               variant="h1"
-              fontWeight={900}
                   sx={{
-                letterSpacing: 1,
-                background: 'linear-gradient(90deg, #0284c7 0%, #7dd3fc 100%)',
+                  fontSize: { xs: '2.5rem', sm: '3.5rem', md: '4.5rem', lg: '5rem' },
+                  fontWeight: 900,
+                  background: 'linear-gradient(135deg, #0ea5e9 0%, #38bdf8 50%, #7dd3fc 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
-                textFillColor: 'transparent',
-                fontSize: { xs: '2.5rem', md: '4.5rem' },
-                mb: 2,
+                  mb: 3,
                 lineHeight: 1.1,
+                  letterSpacing: '-0.02em',
               }}
             >
               <motion.span
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4, duration: 0.8 }}
+                  transition={{ delay: 0.3, duration: 0.8 }}
                 style={{ display: 'inline-block' }}
               >
-                Empowering Schools
+                  Revolutionizing
               </motion.span>
               <br />
               <motion.span
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.8, duration: 0.8 }}
+                  transition={{ delay: 0.6, duration: 0.8 }}
+                  style={{ display: 'inline-block' }}
+                >
+                  Education
+                </motion.span>
+                <br />
+                <motion.span
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.9, duration: 0.8 }}
                 style={{ display: 'inline-block' }}
               >
-                Elevating Education
+                  Management
               </motion.span>
         </Typography>
+            </motion.div>
+
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.3, duration: 0.7 }}
+              transition={{ delay: 1.2, duration: 0.8 }}
             >
-              <Typography variant="h5" color="#22292f" mb={4} sx={{ fontWeight: 500, opacity: 0.9 }}>
-                Modern, integrated management tools for the next generation of schools.
+              <Typography
+                variant="h5"
+                sx={{
+                  color: '#475569',
+                  fontWeight: 400,
+                  mb: 4,
+                  maxWidth: 800,
+                  mx: 'auto',
+                  lineHeight: 1.6,
+                  fontSize: { xs: '1.1rem', sm: '1.25rem', md: '1.5rem' },
+                }}
+              >
+                Experience the future of school management with our cutting-edge platform. 
+                Seamlessly integrate every aspect of educational administration.
               </Typography>
             </motion.div>
+
             <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 1.8, duration: 0.6 }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 1.5, duration: 0.6 }}
               >
               <Button
                 variant="contained"
+                size="large"
+                startIcon={<RocketLaunch />}
                   sx={{
-                  borderRadius: 8,
+                  background: 'linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%)',
+                  borderRadius: 3,
+                  px: 4,
+                  py: 1.5,
+                  fontSize: '1.1rem',
                   fontWeight: 700,
-                  px: 5,
-                  py: 1.8,
-                  fontSize: '1.2rem',
-                  boxShadow: '0 4px 24px 0 #0284c755',
-                  background: 'linear-gradient(90deg, #0284c7 0%, #7dd3fc 100%)',
-                  transition: 'transform 0.2s, box-shadow 0.2s',
+                  boxShadow: '0 8px 32px rgba(14, 165, 233, 0.3)',
+                  transition: 'all 0.3s ease',
                   '&:hover': {
-                    transform: 'scale(1.08)',
-                    boxShadow: '0 8px 32px 0 #0284c799',
-                    background: 'linear-gradient(90deg, #7dd3fc 0%, #0284c7 100%)',
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 12px 40px rgba(14, 165, 233, 0.4)',
+                    background: 'linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%)',
                   },
                   }}
                 >
-                Get Started
+                Start Your Journey
               </Button>
             </motion.div>
-          </motion.div>
+          </Box>
+        </Container>
         </Box>
+
+      {/* Stats Section */}
+      <Box sx={{ py: { xs: 6, md: 10 }, px: { xs: 2, sm: 4, md: 6 } }}>
+        <Container maxWidth="lg">
+          <Grid container spacing={3}>
+            {stats.map((stat, index) => (
+              <Grid item xs={6} sm={3} key={stat.label}>
+                <StatCard stat={stat} index={index} />
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
       </Box>
-      {/* Main Content Card */}
+
+      {/* What's New Section */}
+      <Box sx={{ py: { xs: 6, md: 10 }, px: { xs: 2, sm: 4, md: 6 } }}>
+        <Container maxWidth="lg">
       <motion.div
         initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        style={{
-          width: '100%',
-          maxWidth: 1200,
-          zIndex: 2,
-          background: 'rgba(255,255,255,0.85)',
-          borderRadius: 32,
-          boxShadow: '0 8px 40px 0 rgba(56,189,248,0.15)',
-          backdropFilter: 'blur(20px)',
-          border: '2px solid #bae6fd',
-          padding: '3rem 2.5rem',
-          marginTop: 0,
-          marginBottom: 32,
-        }}
-      >
-        {/* What's New Timeline Section */}
-        <Box sx={{ width: '100%', position: 'relative', py: { xs: 6, md: 10 }, overflow: 'hidden' }}>
-          <motion.div
-            initial={{ backgroundPosition: '0% 50%' }}
-            animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
-            transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              zIndex: 0,
-              background: 'linear-gradient(120deg, #e0f2fe 0%, #bae6fd 100%)',
-              backgroundSize: '200% 200%',
-            }}
-          />
-          <motion.svg
-            width="400"
-            height="220"
-            viewBox="0 0 400 220"
-            fill="none"
-            style={{ position: 'absolute', top: -60, left: -80, zIndex: 0 }}
-            animate={{ scale: [1, 1.1, 1], rotate: [0, 12, 0] }}
-            transition={{ repeat: Infinity, duration: 18, ease: 'easeInOut' }}
           >
-            <ellipse cx="200" cy="110" rx="180" ry="80" fill="#7dd3fc" opacity="0.15" />
-          </motion.svg>
-          <Typography variant="overline" color="#0284c7" fontWeight={700} sx={{ letterSpacing: 2, textAlign: 'center', display: 'block', mb: 1, zIndex: 2, position: 'relative' }}>
-            LATEST UPDATES
-                      </Typography>
-          <Typography variant="h4" fontWeight={800} color="#0284c7" mb={4} sx={{ textAlign: 'center', zIndex: 2, position: 'relative' }}>
-            What&rsquo;s New
-                    </Typography>
-          <Timeline position="right" sx={{ mx: 'auto', maxWidth: 800, zIndex: 2, position: 'relative' }}>
-            {whatsNew.map((feature, idx) => (
-              <TimelineStep
-                key={feature.title}
-                icon={feature.icon}
-                title={feature.title}
-                desc={feature.desc}
-                idx={idx}
+            <Box sx={{ textAlign: 'center', mb: 6 }}>
+              <Chip
+                label="LATEST UPDATES"
+                sx={{
+                  background: 'linear-gradient(135deg, #0ea5e9, #38bdf8)',
+                  color: 'white',
+                  fontWeight: 700,
+                  mb: 2,
+                }}
               />
-          ))}
-          </Timeline>
-        </Box>
-        <Divider sx={{ my: 5, borderColor: '#7dd3fc' }}>
-          <Chip icon={<Update />} label="Implemented" sx={{ fontWeight: 700, fontSize: '1rem', background: '#0284c7', color: '#fff' }} />
-        </Divider>
-        <MissionBlock />
-        {/* Core Features Timeline Section */}
-        <Box sx={{ width: '100%', position: 'relative', py: { xs: 6, md: 10 }, overflow: 'hidden' }}>
-          <motion.div
-            initial={{ backgroundPosition: '0% 50%' }}
-            animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
-            transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              zIndex: 0,
-              background: 'linear-gradient(120deg, #e0f2fe 0%, #bae6fd 100%)',
-              backgroundSize: '200% 200%',
-            }}
-          />
-          <motion.svg
-            width="400"
-            height="220"
-            viewBox="0 0 400 220"
-            fill="none"
-            style={{ position: 'absolute', bottom: -60, right: -80, zIndex: 0 }}
-            animate={{ scale: [1, 1.1, 1], rotate: [0, -12, 0] }}
-            transition={{ repeat: Infinity, duration: 18, ease: 'easeInOut' }}
-        >
-            <ellipse cx="200" cy="110" rx="180" ry="80" fill="#0ea5e9" opacity="0.12" />
-          </motion.svg>
-          <Typography variant="overline" color="#0284c7" fontWeight={700} sx={{ letterSpacing: 2, textAlign: 'center', display: 'block', mb: 1, zIndex: 2, position: 'relative' }}>
-            WHAT WE OFFER
-          </Typography>
-          <Typography variant="h4" fontWeight={800} color="#0284c7" mb={4} sx={{ textAlign: 'center', zIndex: 2, position: 'relative' }}>
-            Core Features
-          </Typography>
-          <Timeline position="right" sx={{ mx: 'auto', maxWidth: 800, zIndex: 2, position: 'relative' }}>
-            {currentServices.map((service, idx) => (
-              <TimelineStep
-                key={service.title}
-                icon={service.icon}
-                title={service.title}
-                desc={service.desc}
-                idx={idx}
-              />
+              <Typography
+                variant="h3"
+                sx={{
+                  fontWeight: 800,
+                  color: '#0ea5e9',
+                  fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
+                }}
+              >
+                What&apos;s New
+              </Typography>
+            </Box>
+          </motion.div>
+
+          <Grid container spacing={4}>
+            {whatsNew.map((feature, index) => (
+              <Grid item xs={12} sm={6} md={4} key={feature.title}>
+                <FeatureCard feature={feature} index={index} />
+              </Grid>
             ))}
-          </Timeline>
+          </Grid>
+        </Container>
+      </Box>
+
+      {/* Mission Section */}
+      <Box sx={{ py: { xs: 6, md: 10 }, px: { xs: 2, sm: 4, md: 6 } }}>
+        <Container maxWidth="lg">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <Card
+              sx={{
+                background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.05) 0%, rgba(56, 189, 248, 0.05) 100%)',
+                backdropFilter: 'blur(20px)',
+                borderRadius: 6,
+                boxShadow: '0 16px 64px rgba(14, 165, 233, 0.15)',
+                border: '1px solid rgba(14, 165, 233, 0.2)',
+                p: { xs: 4, md: 8 },
+                textAlign: 'center',
+              }}
+            >
+              <Avatar
+                src="https://cdn.pixabay.com/photo/2017/01/31/13/14/avatar-2026510_1280.png"
+                alt="Founder"
+                sx={{
+                  width: { xs: 80, md: 120 },
+                  height: { xs: 80, md: 120 },
+                  mx: 'auto',
+                  mb: 4,
+                  boxShadow: '0 8px 32px rgba(14, 165, 233, 0.3)',
+                  border: '4px solid #0ea5e9',
+                }}
+              />
+              <Typography
+                variant="h4"
+                sx={{
+                  fontWeight: 800,
+                  color: '#0ea5e9',
+                  mb: 3,
+                  fontSize: { xs: '1.75rem', sm: '2rem', md: '2.5rem' },
+                }}
+              >
+                Our Mission
+              </Typography>
+              <Typography
+                variant="h6"
+                sx={{
+                  color: '#475569',
+                  mb: 3,
+                  fontStyle: 'italic',
+                  lineHeight: 1.6,
+                  fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
+                }}
+              >
+                &quot;To revolutionize education management through innovative technology, 
+                empowering schools to focus on what truly matters: nurturing the minds 
+                of tomorrow&apos;s leaders.&quot;
+              </Typography>
+              <Typography
+                variant="subtitle1"
+                sx={{
+                  color: '#0ea5e9',
+                  fontWeight: 700,
+                }}
+              >
+                — The SkyNext Team
+              </Typography>
+            </Card>
+          </motion.div>
+        </Container>
         </Box>
-        <Divider sx={{ my: 5, borderColor: '#7dd3fc' }}>
-          <Chip icon={<Update />} label="Upcoming" sx={{ fontWeight: 700, fontSize: '1rem', background: '#7dd3fc', color: '#fff' }} />
-        </Divider>
-        {/* Animated CTA */}
-        <Box sx={{ width: '100%', py: { xs: 6, md: 8 }, display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 2 }}>
+
+      {/* Core Features Section */}
+      <Box sx={{ py: { xs: 6, md: 10 }, px: { xs: 2, sm: 4, md: 6 } }}>
+        <Container maxWidth="lg">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <Box sx={{ textAlign: 'center', mb: 6 }}>
+              <Chip
+                label="CORE FEATURES"
+                sx={{
+                  background: 'linear-gradient(135deg, #0ea5e9, #38bdf8)',
+                  color: 'white',
+                  fontWeight: 700,
+                  mb: 2,
+                }}
+              />
+              <Typography
+                variant="h3"
+                sx={{
+                  fontWeight: 800,
+                  color: '#0ea5e9',
+                  fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
+                }}
+              >
+                Everything You Need
+          </Typography>
+            </Box>
+          </motion.div>
+
+          <Grid container spacing={4}>
+            {currentServices.map((feature, index) => (
+              <Grid item xs={12} sm={6} md={4} key={feature.title}>
+                <FeatureCard feature={feature} index={index} />
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+        </Box>
+
+      {/* CTA Section */}
+      <Box sx={{ py: { xs: 6, md: 10 }, px: { xs: 2, sm: 4, md: 6 } }}>
+        <Container maxWidth="lg">
               <motion.div
             initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
             transition={{ duration: 0.8 }}
               >
-            <Typography variant="h4" fontWeight={800} color="#0284c7" mb={2} align="center">
-              Ready to transform your school?
+            <Card
+              sx={{
+                background: 'linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%)',
+                borderRadius: 6,
+                boxShadow: '0 16px 64px rgba(14, 165, 233, 0.3)',
+                p: { xs: 4, md: 8 },
+                textAlign: 'center',
+                color: 'white',
+              }}
+            >
+              <Typography
+                variant="h3"
+                sx={{
+                  fontWeight: 800,
+                  mb: 3,
+                  fontSize: { xs: '1.75rem', sm: '2rem', md: '2.5rem' },
+                }}
+              >
+                Ready to Transform Your School?
+              </Typography>
+              <Typography
+                variant="h6"
+                sx={{
+                  mb: 4,
+                  opacity: 0.9,
+                  fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
+                }}
+              >
+                Join thousands of schools already using our platform
             </Typography>
             <Button
               variant="contained"
+                size="large"
+                startIcon={<RocketLaunch />}
                   sx={{
-                borderRadius: 8,
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: 3,
+                  px: 4,
+                  py: 1.5,
+                  fontSize: '1.1rem',
                 fontWeight: 700,
-                px: 5,
-                py: 1.8,
-                fontSize: '1.2rem',
-                boxShadow: '0 4px 24px 0 #0284c755',
-                background: 'linear-gradient(90deg, #0284c7 0%, #7dd3fc 100%)',
-                transition: 'transform 0.2s, box-shadow 0.2s',
+                  color: 'white',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  transition: 'all 0.3s ease',
                 '&:hover': {
-                  transform: 'scale(1.08)',
-                  boxShadow: '0 8px 32px 0 #0284c799',
-                  background: 'linear-gradient(90deg, #7dd3fc 0%, #0284c7 100%)',
+                    background: 'rgba(255, 255, 255, 0.3)',
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 12px 40px rgba(0, 0, 0, 0.2)',
                 },
               }}
             >
-              Get Started
+                Get Started Today
             </Button>
+            </Card>
           </motion.div>
+        </Container>
         </Box>
-        {/* Planned Features Timeline Section */}
-        <Box sx={{ width: '100%', position: 'relative', py: { xs: 6, md: 10 }, overflow: 'hidden' }}>
+
+      {/* Future Features Section */}
+      <Box sx={{ py: { xs: 6, md: 10 }, px: { xs: 2, sm: 4, md: 6 } }}>
+        <Container maxWidth="lg">
           <motion.div
-            initial={{ backgroundPosition: '0% 50%' }}
-            animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
-            transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              zIndex: 0,
-              background: 'linear-gradient(120deg, #e0f2fe 0%, #bae6fd 100%)',
-              backgroundSize: '200% 200%',
-            }}
-          />
-          <motion.svg
-            width="400"
-            height="220"
-            viewBox="0 0 400 220"
-            fill="none"
-            style={{ position: 'absolute', top: -60, right: -80, zIndex: 0 }}
-            animate={{ scale: [1, 1.1, 1], rotate: [0, 12, 0] }}
-            transition={{ repeat: Infinity, duration: 18, ease: 'easeInOut' }}
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
           >
-            <ellipse cx="200" cy="110" rx="180" ry="80" fill="#38bdf8" opacity="0.15" />
-          </motion.svg>
-          <Typography variant="overline" color="#0284c7" fontWeight={700} sx={{ letterSpacing: 2, textAlign: 'center', display: 'block', mb: 1, zIndex: 2, position: 'relative' }}>
-            COMING SOON
-                      </Typography>
-          <Typography variant="h4" fontWeight={800} color="#0284c7" mb={4} sx={{ textAlign: 'center', zIndex: 2, position: 'relative' }}>
-            Planned Features
-                    </Typography>
-          <Timeline position="right" sx={{ mx: 'auto', maxWidth: 800, zIndex: 2, position: 'relative' }}>
-            {futureServices.map((service, idx) => (
-              <TimelineStep
-                key={service.title}
-                icon={service.icon}
-                title={service.title}
-                desc={service.desc}
-                idx={idx}
+            <Box sx={{ textAlign: 'center', mb: 6 }}>
+              <Chip
+                label="COMING SOON"
+                sx={{
+                  background: 'linear-gradient(135deg, #38bdf8, #7dd3fc)',
+                  color: 'white',
+                  fontWeight: 700,
+                  mb: 2,
+                }}
               />
-          ))}
-          </Timeline>
+              <Typography
+                variant="h3"
+                sx={{
+                  fontWeight: 800,
+                  color: '#0ea5e9',
+                  fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
+                }}
+              >
+                Future Roadmap
+              </Typography>
         </Box>
       </motion.div>
+
+          <Grid container spacing={4}>
+            {futureServices.map((feature, index) => (
+              <Grid item xs={12} sm={6} md={3} key={feature.title}>
+                <FeatureCard feature={feature} index={index} />
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </Box>
     </Box>
   );
 } 
